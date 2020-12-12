@@ -15,5 +15,8 @@
     "psr-4": {
       "VitesseCms\\Import\\": "src/"
     }
+  },
+  "require": {
+    "vitessecms/vitessecms": "^0.0.8"
   }
 }
