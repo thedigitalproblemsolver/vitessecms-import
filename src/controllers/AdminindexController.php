@@ -14,7 +14,7 @@ class AdminindexController extends AbstractAdminController
     {
         $this->view->setVar('content', $this->view->renderTemplate(
             'import_menu',
-            $this->configuration->getRootDir().'src/import/resources/views/admin/'
+            $this->configuration->getVendorNameDir().'import/src/resources/views/admin/'
         ));
         $this->prepareView();
     }
@@ -55,10 +55,13 @@ class AdminindexController extends AbstractAdminController
                         ImportUtil::getFieldsFromForm(ImportUtil::getFormFromClass($className), $className)
                     );
                     $importHelper->processImport();
+                    $this->flash->_('ADMIN_FILE_IMPORT_SUCCESS');
+                else :
+                    $this->flash->_('ADMIN_FILE_IMPORT_FAILED', 'error');
                 endif;
-                $this->flash->_('ADMIN_FILE_IMPORT_SUCCESS');
+            else :
+                $this->flash->_('ADMIN_FILE_IMPORT_FAILED', 'error');
             endif;
-            $this->flash->_('ADMIN_FILE_IMPORT_FAILED', 'error');
         endif;
 
         $this->redirect();

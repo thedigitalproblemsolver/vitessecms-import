@@ -83,9 +83,12 @@ class ImportType extends AbstractCollection
         return $this->type !== null;
     }
 
-    public function getTypeClass(): string
+    public function getTypeClass(string $account): string
     {
-        if (substr_count($this->type, 'VitesseCms\\Import\\Helpers')) :
+        if (
+            substr_count($this->type, 'VitesseCms\\Import\\Helpers')
+            || substr_count($this->type, 'VitesseCms\\'.ucfirst($account).'\\Import\\Helpers')
+        ) :
             return $this->type;
         endif;
 

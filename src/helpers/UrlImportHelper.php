@@ -21,7 +21,7 @@ class UrlImportHelper extends AbstractImportHelper
 
     public static function buildAdminForm(ImportTypeForm $form, ImportType $item): void
     {
-        $form->addUrl('Url', 'url',(new Attributes())->setRequired(true))
+        $form->addUrl('%IMPORT_URL%', 'url',(new Attributes())->setRequired(true))
             ->addDropdown(
                 'Language',
                 'language',
@@ -30,7 +30,7 @@ class UrlImportHelper extends AbstractImportHelper
         );
 
         if ($item->_('url')) :
-            $form->addHtml('<h2>Datafield mapping</h2>');
+            $form->addHtml('<h2>%IMPORT_DATAFIELD_MAPPING%</h2>');
 
             $httpHeaders = get_headers($item->_('url'),1);
 
@@ -77,7 +77,7 @@ class UrlImportHelper extends AbstractImportHelper
                     );
                 endforeach;
 
-                $form->addHtml('<h2>Categorie mapping</h2>');
+                $form->addHtml('<h2>%IMPORT_CATEGORY_MAPPING%</h2>');
 
                 $categoryGroups = DatagroupHelper::getPathFromRoot($datagroup);
                 /** @var  Datagroup $categoryGroup */
@@ -92,7 +92,7 @@ class UrlImportHelper extends AbstractImportHelper
                         endif;
 
                         $form->addDropdown(
-                            'Categorie: '.$categoryGroup->_('name'),
+                            '%IMPORT_CATEGORY% : '.$categoryGroup->_('name'),
                             'category_'.$key,
                             (new Attributes())->setRequired(true)
                                 ->setOptions(ElementHelper::arrayToSelectOptions($header))
