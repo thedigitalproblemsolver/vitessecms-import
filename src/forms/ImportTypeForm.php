@@ -41,10 +41,10 @@ class ImportTypeForm extends AbstractForm
         if($item->getId()) :
             $this->addHtml(Tag::linkTo(
                 [
-                    'action' => $this->url->getBaseUri().'import/index/index/'.$item->getId(),
-                    'target' => '_blank'
-                ],
-                'Trigger import'
+                    'action' => 'import/index/index/'.$item->getId(),
+                    'target' => '_blank',
+                    'text' => '%IMPORT_TRIGGER_IMPORT%'
+                ]
             ));
         endif;
 
