@@ -49,7 +49,10 @@ class AdminindexController extends AbstractAdminController
                     $importHelper->setFile($file);
                     $importHelper->setClass($className);
                     $importHelper->setFields(
-                        ImportUtil::getFieldsFromForm(ImportUtil::getFormFromClass($className), $className)
+                        ImportUtil::getFieldsFromForm(
+                            ImportUtil::getFormFromClass($className, $this->request),
+                            $className
+                        )
                     );
                     $importHelper->processImport();
                     $this->flash->_('ADMIN_FILE_IMPORT_SUCCESS');
