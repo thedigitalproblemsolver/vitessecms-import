@@ -7,7 +7,6 @@ use VitesseCms\Form\Models\Attributes;
 
 class UploadFileForm extends AbstractForm
 {
-
     public function initialize()
     {
         $this->addUpload(
