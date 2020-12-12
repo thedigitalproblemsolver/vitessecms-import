@@ -84,10 +84,8 @@ class ImportUtil
         return new $formName();
     }
 
-    public static function getImporters(string $systemDir, string $accountDir): array
+    public static function getImporters(array $directories): array
     {
-        $directories = [ $systemDir . 'import/helpers/', $accountDir . 'src/import/helpers/'];
-
         $files = [];
         foreach ($directories as $directory) :
             $files = array_merge($files, DirectoryUtil::getFilelist($directory));
@@ -96,7 +94,10 @@ class ImportUtil
 
         $newReturn = [];
         foreach ($files as $filePath => $fileName) :
-            if(substr_count($fileName, 'Abstract') === 0 ) :
+            if(
+                substr_count($fileName, 'Abstract') === 0
+                && substr_count($fileName, 'Interface') === 0
+            ) :
                 $newReturn[SystemUtil::createNamespaceFromPath($filePath)] = str_replace('ImportHelper.php','',$fileName);
             endif;
         endforeach;

@@ -15,8 +15,10 @@ class ImportTypeForm extends AbstractForm
     public function initialize(ImportType $item): void
     {
         $files = ImportUtil::getImporters(
-            $this->configuration->getSystemDir(),
-            $this->configuration->getAccountDir()
+            [
+                $this->configuration->getVendorNameDir().'import/src/helpers/',
+                $this->configuration->getAccountDir().'src/import/helpers/'
+            ]
         );
 
         $this->addText('%CORE_NAME%', 'name', (new Attributes())->setRequired(true))
@@ -33,7 +35,7 @@ class ImportTypeForm extends AbstractForm
         ;
 
         if($item->hasType()) :
-            $item->getTypeClass()::buildAdminForm($this, $item);
+            $item->getTypeClass($this->configuration->getAccount())::buildAdminForm($this, $item);
         endif;
 
         if($item->getId()) :
