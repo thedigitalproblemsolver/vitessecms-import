@@ -2,13 +2,13 @@
 
 namespace VitesseCms\Import\Utils;
 
+use http\Client\Request;
 use VitesseCms\Content\Forms\ItemForm;
 use VitesseCms\Content\Models\Item;
 use VitesseCms\Core\Models\Datafield;
 use VitesseCms\Core\Utils\DirectoryUtil;
 use VitesseCms\Core\Utils\SystemUtil;
 use VitesseCms\Form\AbstractForm;
-use Phalcon\Di;
 use Phalcon\Forms\Element\Check;
 use Phalcon\Forms\Element\Text;
 
@@ -18,14 +18,14 @@ class ImportUtil
     {
         $fields = [
             [
-                'name'      => 'published',
+                'name' => 'published',
                 'multilang' => false,
-                'element'   => Check::class,
+                'element' => Check::class,
             ],
             [
-                'name'      => 'parentId',
+                'name' => 'parentId',
                 'multilang' => false,
-                'element'   => Text::class,
+                'element' => Text::class,
             ],
         ];
         foreach ($form->getElements() as $element) :
@@ -34,9 +34,9 @@ class ImportUtil
                 && get_class($element) != 'Phalcon\Forms\Element\Submit'
             ) :
                 $field = [
-                    'name'      => $element->getName(),
+                    'name' => $element->getName(),
                     'multilang' => $element->getAttribute('multilang'),
-                    'element'   => get_class($element),
+                    'element' => get_class($element),
                 ];
                 if ($className === Item::class) :
                     Datafield::setFindPublished(false);
@@ -50,10 +50,10 @@ class ImportUtil
         return $fields;
     }
 
-    public static function getFormFromClass(string $className): AbstractForm
+    public static function getFormFromClass(string $className, Request $request): AbstractForm
     {
         if ($className === Item::class) :
-            $file = Di::getDefault()->get('request')->getUploadedFiles()[0]->getTempName();
+            $file = $request->getUploadedFiles()[0]->getTempName();
             $item = null;
             if (($handle = fopen($file, "r")) !== false) :
                 $row = 1;
@@ -73,10 +73,8 @@ class ImportUtil
                     $row++;
                 endwhile;
             endif;
-            $formManager = Di::getDefault()->get('forms');
-            $formManager->set("item", new ItemForm($item));
 
-            return $formManager->get("item");
+            return new ItemForm($item);
         endif;
 
         $formName = SystemUtil::getFormclassFromClass($className);
@@ -94,11 +92,11 @@ class ImportUtil
 
         $newReturn = [];
         foreach ($files as $filePath => $fileName) :
-            if(
+            if (
                 substr_count($fileName, 'Abstract') === 0
                 && substr_count($fileName, 'Interface') === 0
             ) :
-                $newReturn[SystemUtil::createNamespaceFromPath($filePath)] = str_replace('ImportHelper.php','',$fileName);
+                $newReturn[SystemUtil::createNamespaceFromPath($filePath)] = str_replace('ImportHelper.php', '', $fileName);
             endif;
         endforeach;
 

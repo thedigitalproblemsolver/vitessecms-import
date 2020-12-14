@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace VitesseCms\Import\Helpers;
 
@@ -7,15 +7,8 @@ use VitesseCms\Import\Models\ImportType;
 use Phalcon\Forms\Element\Check;
 use VitesseCms\Shop\Models\TaxRate;
 
-/**
- * Class ImportHelper
- */
 class CsvImportHelper extends AbstractImportHelper
 {
-
-    /**
-     * {@inheritdoc}
-     */
     public function processImport(?ImportType $importType = null): void
     {
         $row = 1;

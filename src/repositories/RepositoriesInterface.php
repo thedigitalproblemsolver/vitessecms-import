@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace VitesseCms\Import\Interfaces;
+namespace VitesseCms\Import\Repositories;
 
 /**
  * @property RepositoryInterface $repositories
