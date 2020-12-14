@@ -10,9 +10,9 @@ use VitesseCms\Core\Models\DatagroupIterator;
 use VitesseCms\Database\Models\FindValue;
 use VitesseCms\Database\Models\FindValueIterator;
 use VitesseCms\Database\Utils\MongoUtil;
-use VitesseCms\Import\Interfaces\RepositoriesInterface;
 use VitesseCms\Import\Models\ImportDatafieldIterator;
 use VitesseCms\Import\Models\ImportType;
+use VitesseCms\Import\Repositories\RepositoriesInterface;
 use VitesseCms\Language\Models\Language;
 
 class IndexController extends AbstractController implements RepositoriesInterface
@@ -23,9 +23,6 @@ class IndexController extends AbstractController implements RepositoriesInterfac
      */
     protected $parseUpdateOnly;
 
-    /**
-     * @throws \Phalcon\Mvc\Collection\Exception
-     */
     public function IndexAction(): void
     {
         set_time_limit(300);

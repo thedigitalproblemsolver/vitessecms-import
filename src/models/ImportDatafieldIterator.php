@@ -2,8 +2,6 @@
 
 namespace VitesseCms\Import\Models;
 
-use \ArrayIterator;
-
 class ImportDatafieldIterator extends ArrayIterator
 {
     public function __construct(array $datafields = [])
@@ -21,5 +19,3 @@ class ImportDatafieldIterator extends ArrayIterator
         $this->append($value);
     }
 }
-
-

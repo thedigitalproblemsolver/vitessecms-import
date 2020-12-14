@@ -1,11 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace VitesseCms\Import\Interfaces;
+namespace VitesseCms\Import\Repositories;
 
 use VitesseCms\Content\Repositories\ItemRepository;
 use VitesseCms\Core\Repositories\DatagroupRepository;
-use VitesseCms\Import\Repositories\ImportDatafieldRepository;
-use VitesseCms\Import\Repositories\ImportTypeRepository;
 use VitesseCms\Language\Repositories\LanguageRepository;
 
 /**

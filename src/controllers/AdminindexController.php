@@ -6,7 +6,6 @@ use VitesseCms\Admin\AbstractAdminController;
 use VitesseCms\Import\Forms\UploadFileForm;
 use VitesseCms\Import\Helpers\AbstractImportHelperInterface;
 use VitesseCms\Import\Utils\ImportUtil;
-use \count;
 
 class AdminindexController extends AbstractAdminController
 {
@@ -38,9 +37,7 @@ class AdminindexController extends AbstractAdminController
                 if (count($filenameParts) === 6) :
                     unset($filenameParts[0]);
                     $filenameParts = array_reverse($filenameParts);
-                    [$languageLocale,   /**
-     * {@inheritdoc}
-     */ $importType] = explode('.', $filenameParts[0]);
+                    [$languageLocale, $importType] = explode('.', $filenameParts[0]);
                     unset($filenameParts[0]);
                     $filenameParts = array_reverse($filenameParts);
                     $className = implode('\\', $filenameParts);
@@ -52,7 +49,10 @@ class AdminindexController extends AbstractAdminController
                     $importHelper->setFile($file);
                     $importHelper->setClass($className);
                     $importHelper->setFields(
-                        ImportUtil::getFieldsFromForm(ImportUtil::getFormFromClass($className), $className)
+                        ImportUtil::getFieldsFromForm(
+                            ImportUtil::getFormFromClass($className, $this->request),
+                            $className
+                        )
                     );
                     $importHelper->processImport();
                     $this->flash->_('ADMIN_FILE_IMPORT_SUCCESS');

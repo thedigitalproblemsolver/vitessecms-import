@@ -1,29 +1,18 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace VitesseCms\Import\Forms;
 
 use VitesseCms\Form\AbstractForm;
+use VitesseCms\Form\Models\Attributes;
 
-/**
- * Class UploadFileForm
- */
 class UploadFileForm extends AbstractForm
 {
-
     public function initialize()
     {
-        $this->_(
-            'file',
+        $this->addUpload(
             '%ADMIN_SELECT_A_FILE%',
             'file',
-            [
-                'required' => 'required',
-            ]
-        );
-
-        $this->_(
-            'submit',
-            '%ADMIN_UPLOAD_FILE%'
-        );
+            (new Attributes())->setRequired(true)
+        )->addSubmitButton('%ADMIN_UPLOAD_FILE%');
     }
 }
