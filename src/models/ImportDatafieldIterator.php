@@ -2,7 +2,7 @@
 
 namespace VitesseCms\Import\Models;
 
-class ImportDatafieldIterator extends ArrayIterator
+class ImportDatafieldIterator extends \ArrayIterator
 {
     public function __construct(array $datafields = [])
     {
