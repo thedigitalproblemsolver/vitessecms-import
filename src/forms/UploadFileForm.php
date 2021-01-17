@@ -9,7 +9,7 @@ class UploadFileForm extends AbstractForm
 {
     public function initialize()
     {
-        $this->addUpload(
+        $this->addFilemanager(
             '%ADMIN_SELECT_A_FILE%',
             'file',
             (new Attributes())->setRequired(true)

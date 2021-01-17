@@ -13,7 +13,7 @@ class AdminMenuListener
         if ($adminMenu->getUser()->getPermissionRole() === 'superadmin') :
             $children = new AdminMenuNavBarChildren();
             $children->addChild('Import', 'admin/import/adminindex/index');
-            $adminMenu->addDropbown('System',$children);
+            $adminMenu->addDropdown('System',$children);
         endif;
     }
 }
