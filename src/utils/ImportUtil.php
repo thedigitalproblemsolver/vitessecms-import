@@ -5,7 +5,7 @@ namespace VitesseCms\Import\Utils;
 use http\Client\Request;
 use VitesseCms\Content\Forms\ItemForm;
 use VitesseCms\Content\Models\Item;
-use VitesseCms\Core\Models\Datafield;
+use VitesseCms\Datafield\Models\Datafield;
 use VitesseCms\Core\Utils\DirectoryUtil;
 use VitesseCms\Core\Utils\SystemUtil;
 use VitesseCms\Form\AbstractForm;

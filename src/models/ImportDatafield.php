@@ -2,7 +2,7 @@
 
 namespace VitesseCms\Import\Models;
 
-use VitesseCms\Core\Models\Datafield;
+use VitesseCms\Datafield\Models\Datafield;
 
 class ImportDatafield extends Datafield
 {
