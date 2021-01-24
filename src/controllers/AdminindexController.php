@@ -55,12 +55,12 @@ class AdminindexController extends AbstractAdminController
                         )
                     );
                     $importHelper->processImport();
-                    $this->flash->_('ADMIN_FILE_IMPORT_SUCCESS');
+                    $this->flash->setSucces('ADMIN_FILE_IMPORT_SUCCESS');
                 else :
-                    $this->flash->_('ADMIN_FILE_IMPORT_FAILED', 'error');
+                    $this->flash->setError('ADMIN_FILE_IMPORT_FAILED');
                 endif;
             else :
-                $this->flash->_('ADMIN_FILE_IMPORT_FAILED', 'error');
+                $this->flash->setError('ADMIN_FILE_IMPORT_FAILED');
             endif;
         endif;
 
