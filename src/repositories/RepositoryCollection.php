@@ -3,7 +3,7 @@
 namespace VitesseCms\Import\Repositories;
 
 use VitesseCms\Content\Repositories\ItemRepository;
-use VitesseCms\Core\Repositories\DatagroupRepository;
+use VitesseCms\Datagroup\Repositories\DatagroupRepository;
 use VitesseCms\Language\Repositories\LanguageRepository;
 
 class RepositoryCollection

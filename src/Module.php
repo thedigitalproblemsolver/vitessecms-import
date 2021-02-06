@@ -4,7 +4,7 @@ namespace VitesseCms\Import;
 
 use VitesseCms\Content\Repositories\ItemRepository;
 use VitesseCms\Core\AbstractModule;
-use VitesseCms\Core\Repositories\DatagroupRepository;
+use VitesseCms\Datagroup\Repositories\DatagroupRepository;
 use VitesseCms\Import\Repositories\ImportDatafieldRepository;
 use VitesseCms\Import\Repositories\RepositoryCollection;
 use VitesseCms\Import\Repositories\ImportTypeRepository;
