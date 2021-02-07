@@ -3,9 +3,9 @@
 namespace VitesseCms\Import\Helpers;
 
 use VitesseCms\Content\Models\Item;
-use VitesseCms\Core\Helpers\DatagroupHelper;
+use VitesseCms\Datagroup\Helpers\DatagroupHelper;
 use VitesseCms\Datafield\Models\Datafield;
-use VitesseCms\Core\Models\Datagroup;
+use VitesseCms\Datagroup\Models\Datagroup;
 use VitesseCms\Form\Helpers\ElementHelper;
 use VitesseCms\Form\Models\Attributes;
 use VitesseCms\Import\Forms\ImportTypeForm;

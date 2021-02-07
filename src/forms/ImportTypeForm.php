@@ -2,7 +2,7 @@
 
 namespace VitesseCms\Import\Forms;
 
-use VitesseCms\Core\Models\Datagroup;
+use VitesseCms\Datagroup\Models\Datagroup;
 use VitesseCms\Form\AbstractForm;
 use VitesseCms\Form\Helpers\ElementHelper;
 use VitesseCms\Form\Models\Attributes;
