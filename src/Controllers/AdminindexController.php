@@ -13,7 +13,7 @@ class AdminindexController extends AbstractAdminController
     {
         $this->view->setVar('content', $this->view->renderTemplate(
             'import_menu',
-            $this->configuration->getVendorNameDir().'import/src/resources/views/admin/'
+            $this->configuration->getVendorNameDir().'import/src/Resources/views/admin/'
         ));
         $this->prepareView();
     }
