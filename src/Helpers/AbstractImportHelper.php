@@ -43,11 +43,16 @@ abstract class AbstractImportHelper extends AbstractInjectable implements Abstra
         $this->di = new InjectableHelper();
     }
 
-    public function onConstruct() {
+    public static function buildAdminForm(ImportTypeForm $form, ImportType $item): void
+    {
+    }
+
+    public function onConstruct()
+    {
         $this->fields = [];
     }
 
-    public function setFile( FileInterface $file): void
+    public function setFile(FileInterface $file): void
     {
         $this->file = $file;
     }
@@ -66,10 +71,6 @@ abstract class AbstractImportHelper extends AbstractInjectable implements Abstra
     public function setFields(array $fields): void
     {
         $this->fields = $fields;
-    }
-
-    public static function buildAdminForm(ImportTypeForm $form, ImportType $item): void
-    {
     }
 
     public function isNew(): bool

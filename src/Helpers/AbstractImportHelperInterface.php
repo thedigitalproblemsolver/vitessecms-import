@@ -8,7 +8,9 @@ use Phalcon\Http\Request\FileInterface;
 
 interface AbstractImportHelperInterface
 {
-    public function setFile( FileInterface $file): void;
+    public static function buildAdminForm(ImportTypeForm $form, ImportType $item): void;
+
+    public function setFile(FileInterface $file): void;
 
     public function setLanguage(string $languageLocale): void;
 
@@ -19,6 +21,4 @@ interface AbstractImportHelperInterface
     public function processImport(?ImportType $importType = null): void;
 
     public function isNew(): bool;
-
-    public static function buildAdminForm(ImportTypeForm $form, ImportType $item): void;
 }

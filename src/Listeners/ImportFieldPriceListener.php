@@ -19,7 +19,7 @@ class ImportFieldPriceListener
                 $importValue * (1 - ($taxrate->getTaxRate() / 100))
             );
         endif;
-        $item->set($importDatafield->getCallingName().'_purchase', 0);
-        $item->set($importDatafield->getCallingName().'_sale', $importValue);
+        $item->set($importDatafield->getCallingName() . '_purchase', 0);
+        $item->set($importDatafield->getCallingName() . '_sale', $importValue);
     }
 }

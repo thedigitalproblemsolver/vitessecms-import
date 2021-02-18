@@ -114,169 +114,6 @@ class IndexController extends AbstractController implements RepositoriesInterfac
         $this->view->disable();
     }
 
-    protected function parseFields(
-        ImportDatafieldIterator $fieldsToParse,
-        bool $parseUpdateOnly,
-        array $data,
-        array $header,
-        Item $item,
-        Language $language
-    ): Item
-    {
-        while ($fieldsToParse->valid()) :
-            $datafield = $fieldsToParse->current();
-            if (
-                $parseUpdateOnly === false
-                || ($parseUpdateOnly === true && $datafield->isUpdate())
-            ) :
-                $value = '';
-                if (isset($header[$datafield->getHeader()], $data[$header[$datafield->getHeader()]])) :
-                    $value = $data[$header[$datafield->getHeader()]];
-                endif;
-
-                if (empty($value)) :
-                    $value = $datafield->getEmptyValue();
-                endif;
-
-                if ($datafield->isMultilang()) :
-                    $item->set($datafield->getCallingName(), $value, true, $language->getShortCode());
-                else :
-                    $item->set($datafield->getCallingName(), $value);
-                endif;
-            endif;
-            $fieldsToParse->next();
-        endwhile;
-        $fieldsToParse->rewind();
-
-        return $item;
-    }
-
-    protected function setParentItemImage(Item $item, Item $parentItem): void
-    {
-        if (
-            $parentItem->_('image') === ''
-            && $item->_('image') !== ''
-        ) :
-            $parentItem->set('image', $item->_('image'));
-            $parentItem->save();
-        endif;
-    }
-
-    protected function parseFieldsImportValue(
-        Item $item,
-        ImportDatafieldIterator $fieldsToParse,
-        $parseUpdateOnly
-    ): Item
-    {
-        while ($fieldsToParse->valid()) :
-            $datafield = $fieldsToParse->current();
-            if (
-                $parseUpdateOnly === false
-                || ($parseUpdateOnly === true && $datafield->isUpdate())
-            ) :
-                if (!$datafield->isMultilang()) :
-                    $this->eventsManager->fire($datafield->getFieldType() . ':parse', $item, $datafield);
-                endif;
-            endif;
-            $fieldsToParse->next();
-        endwhile;
-        $fieldsToParse->rewind();
-
-        return $item;
-    }
-
-    protected function getBaseItem(
-        array $uniqueFields,
-        Language $language,
-        array $data,
-        array $header,
-        ImportType $importType,
-        Item $parentItem,
-        $headerNameField
-    ): Item
-    {
-        foreach ($uniqueFields as $calling_name => $headerField) :
-            Item::setFindValue(
-                $calling_name . '.' . $language->getShortCode(),
-                $data[$header[$headerField]]
-            );
-        endforeach;
-
-        Item::setFindPublished(false);
-        Item::setFindValue('datagroup', $importType->_('datagroup'));
-        Item::setFindValue('parentId', (string)$parentItem->getId());
-        $item = Item::findFirst();
-        $this->parseUpdateOnly = true;
-        if (!$item) :
-            $item = ItemFactory::create(
-                $data[$header[$headerNameField]],
-                $importType->_('datagroup'),
-                [],
-                true,
-                (string)$parentItem->getId()
-            );
-            $this->parseUpdateOnly = false;
-        endif;
-
-        return $item;
-    }
-
-    protected function getItemFromDatagroupPath(
-        DatagroupIterator $categoryGroups,
-        ImportType $importType,
-        array $data,
-        array $header,
-        Language $language
-    ): ?Item
-    {
-        $parentId = null;
-        $parentItem = null;
-
-        while ($categoryGroups->valid()) :
-            $categoryGroup = $categoryGroups->current();
-            $key = $categoryGroups->key();
-            if ((string)$categoryGroup->getId() !== $importType->getDatagroup()) :
-                $parentTitle = null;
-                $parentItem = null;
-
-                if (MongoUtil::isObjectId($importType->_('category_' . $key))) :
-                    $item = $this->repositories->item->getById($importType->_('category_' . $key));
-                    if ($item !== null) :
-                        $parentTitle = $item->getNameField();
-                    endif;
-                else :
-                    $parentTitle = $data[$header[$importType->_('category_' . $key)]];
-                endif;
-
-                if ($parentTitle !== null) :
-                    $parentItem = $this->repositories->item->findFirst(
-                        new FindValueIterator([
-                            new FindValue('datagroup', (string)$categoryGroup->getId()),
-                            new FindValue('parentId', $parentId),
-                            new FindValue('name.' . $language->getShortCode(), $parentTitle),
-                        ]),
-                        false
-                    );
-                endif;
-
-                if ($parentItem === null) :
-                    $parentItem = ItemFactory::create(
-                        $parentTitle,
-                        (string)$categoryGroup->getId(),
-                        [],
-                        true,
-                        $parentId
-                    );
-                    $parentItem->save();
-                endif;
-                $parentId = (string)$parentItem->getId();
-            endif;
-            $categoryGroups->next();
-        endwhile;
-
-        return $parentItem;
-    }
-
     protected function getFieldsToParse(ImportType $importType, Datagroup $datagroup): ImportDatafieldIterator
     {
         $fieldsToParse = new ImportDatafieldIterator();
@@ -377,5 +214,168 @@ class IndexController extends AbstractController implements RepositoriesInterfac
         $fieldsToParse->rewind();
 
         return 'name';
+    }
+
+    protected function getItemFromDatagroupPath(
+        DatagroupIterator $categoryGroups,
+        ImportType $importType,
+        array $data,
+        array $header,
+        Language $language
+    ): ?Item
+    {
+        $parentId = null;
+        $parentItem = null;
+
+        while ($categoryGroups->valid()) :
+            $categoryGroup = $categoryGroups->current();
+            $key = $categoryGroups->key();
+            if ((string)$categoryGroup->getId() !== $importType->getDatagroup()) :
+                $parentTitle = null;
+                $parentItem = null;
+
+                if (MongoUtil::isObjectId($importType->_('category_' . $key))) :
+                    $item = $this->repositories->item->getById($importType->_('category_' . $key));
+                    if ($item !== null) :
+                        $parentTitle = $item->getNameField();
+                    endif;
+                else :
+                    $parentTitle = $data[$header[$importType->_('category_' . $key)]];
+                endif;
+
+                if ($parentTitle !== null) :
+                    $parentItem = $this->repositories->item->findFirst(
+                        new FindValueIterator([
+                            new FindValue('datagroup', (string)$categoryGroup->getId()),
+                            new FindValue('parentId', $parentId),
+                            new FindValue('name.' . $language->getShortCode(), $parentTitle),
+                        ]),
+                        false
+                    );
+                endif;
+
+                if ($parentItem === null) :
+                    $parentItem = ItemFactory::create(
+                        $parentTitle,
+                        (string)$categoryGroup->getId(),
+                        [],
+                        true,
+                        $parentId
+                    );
+                    $parentItem->save();
+                endif;
+                $parentId = (string)$parentItem->getId();
+            endif;
+            $categoryGroups->next();
+        endwhile;
+
+        return $parentItem;
+    }
+
+    protected function getBaseItem(
+        array $uniqueFields,
+        Language $language,
+        array $data,
+        array $header,
+        ImportType $importType,
+        Item $parentItem,
+        $headerNameField
+    ): Item
+    {
+        foreach ($uniqueFields as $calling_name => $headerField) :
+            Item::setFindValue(
+                $calling_name . '.' . $language->getShortCode(),
+                $data[$header[$headerField]]
+            );
+        endforeach;
+
+        Item::setFindPublished(false);
+        Item::setFindValue('datagroup', $importType->_('datagroup'));
+        Item::setFindValue('parentId', (string)$parentItem->getId());
+        $item = Item::findFirst();
+        $this->parseUpdateOnly = true;
+        if (!$item) :
+            $item = ItemFactory::create(
+                $data[$header[$headerNameField]],
+                $importType->_('datagroup'),
+                [],
+                true,
+                (string)$parentItem->getId()
+            );
+            $this->parseUpdateOnly = false;
+        endif;
+
+        return $item;
+    }
+
+    protected function parseFields(
+        ImportDatafieldIterator $fieldsToParse,
+        bool $parseUpdateOnly,
+        array $data,
+        array $header,
+        Item $item,
+        Language $language
+    ): Item
+    {
+        while ($fieldsToParse->valid()) :
+            $datafield = $fieldsToParse->current();
+            if (
+                $parseUpdateOnly === false
+                || ($parseUpdateOnly === true && $datafield->isUpdate())
+            ) :
+                $value = '';
+                if (isset($header[$datafield->getHeader()], $data[$header[$datafield->getHeader()]])) :
+                    $value = $data[$header[$datafield->getHeader()]];
+                endif;
+
+                if (empty($value)) :
+                    $value = $datafield->getEmptyValue();
+                endif;
+
+                if ($datafield->isMultilang()) :
+                    $item->set($datafield->getCallingName(), $value, true, $language->getShortCode());
+                else :
+                    $item->set($datafield->getCallingName(), $value);
+                endif;
+            endif;
+            $fieldsToParse->next();
+        endwhile;
+        $fieldsToParse->rewind();
+
+        return $item;
+    }
+
+    protected function parseFieldsImportValue(
+        Item $item,
+        ImportDatafieldIterator $fieldsToParse,
+        $parseUpdateOnly
+    ): Item
+    {
+        while ($fieldsToParse->valid()) :
+            $datafield = $fieldsToParse->current();
+            if (
+                $parseUpdateOnly === false
+                || ($parseUpdateOnly === true && $datafield->isUpdate())
+            ) :
+                if (!$datafield->isMultilang()) :
+                    $this->eventsManager->fire($datafield->getFieldType() . ':parse', $item, $datafield);
+                endif;
+            endif;
+            $fieldsToParse->next();
+        endwhile;
+        $fieldsToParse->rewind();
+
+        return $item;
+    }
+
+    protected function setParentItemImage(Item $item, Item $parentItem): void
+    {
+        if (
+            $parentItem->_('image') === ''
+            && $item->_('image') !== ''
+        ) :
+            $parentItem->set('image', $item->_('image'));
+            $parentItem->save();
+        endif;
     }
 }

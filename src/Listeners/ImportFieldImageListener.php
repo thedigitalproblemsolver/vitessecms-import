@@ -23,24 +23,24 @@ class ImportFieldImageListener
             )
         ) :
             $ext = FileUtil::getExtension($itemValue);
-            $filename = FileUtil::sanatize($item->getNameField().'.'.$ext);
-            $target = $configuration->getUploadDir().$importDatafield->getImageFolder().'/'.$filename;
+            $filename = FileUtil::sanatize($item->getNameField() . '.' . $ext);
+            $target = $configuration->getUploadDir() . $importDatafield->getImageFolder() . '/' . $filename;
             if (!is_file($target)) :
                 if (
                     strpos($itemValue, 'www.') === 0
                     && strpos($itemValue, 'https://') === false
                 ) :
-                    $itemValue = 'https://'.$itemValue;
+                    $itemValue = 'https://' . $itemValue;
                 endif;
 
                 if ($url->exists($itemValue)):
                     FileUtil::copy($itemValue, $target);
-                    $item->set($importDatafield->getCallingName(), $importDatafield->getImageFolder().'/'.$filename);
+                    $item->set($importDatafield->getCallingName(), $importDatafield->getImageFolder() . '/' . $filename);
                 else :
                     $item->set($importDatafield->getCallingName(), '');
                 endif;
             else :
-                $item->set($importDatafield->getCallingName(), $importDatafield->getImageFolder().'/'.$filename);
+                $item->set($importDatafield->getCallingName(), $importDatafield->getImageFolder() . '/' . $filename);
             endif;
         endif;
     }

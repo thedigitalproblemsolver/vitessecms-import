@@ -13,7 +13,7 @@ class AdminindexController extends AbstractAdminController
     {
         $this->view->setVar('content', $this->view->renderTemplate(
             'import_menu',
-            $this->configuration->getVendorNameDir().'import/src/Resources/views/admin/'
+            $this->configuration->getVendorNameDir() . 'import/src/Resources/views/admin/'
         ));
         $this->prepareView();
     }
@@ -42,7 +42,7 @@ class AdminindexController extends AbstractAdminController
                     $filenameParts = array_reverse($filenameParts);
                     $className = implode('\\', $filenameParts);
 
-                    $helperClass = 'VitesseCms\\Import\\Helpers\\'.ucfirst($importType).'ImportHelper';
+                    $helperClass = 'VitesseCms\\Import\\Helpers\\' . ucfirst($importType) . 'ImportHelper';
                     /** @var AbstractImportHelperInterface $importHelper */
                     $importHelper = new $helperClass();
                     $importHelper->setLanguage($languageLocale);

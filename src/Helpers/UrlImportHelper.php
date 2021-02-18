@@ -14,25 +14,20 @@ use VitesseCms\Language\Models\Language;
 
 class UrlImportHelper extends AbstractImportHelper
 {
-    public function processImport(?ImportType $importType = null): void
-    {
-        die('processImport');
-    }
-
     public static function buildAdminForm(ImportTypeForm $form, ImportType $item): void
     {
-        $form->addUrl('%IMPORT_URL%', 'url',(new Attributes())->setRequired(true))
+        $form->addUrl('%IMPORT_URL%', 'url', (new Attributes())->setRequired(true))
             ->addDropdown(
                 'Language',
                 'language',
                 (new Attributes())->setRequired(true)
                     ->setOptions(ElementHelper::arrayToSelectOptions(Language::findAll()))
-        );
+            );
 
         if ($item->_('url')) :
             $form->addHtml('<h2>%IMPORT_DATAFIELD_MAPPING%</h2>');
 
-            $httpHeaders = get_headers($item->_('url'),1);
+            $httpHeaders = get_headers($item->_('url'), 1);
 
             $header = [];
             switch ($httpHeaders['Content-Type'][1]) :
@@ -47,14 +42,14 @@ class UrlImportHelper extends AbstractImportHelper
                     break;
                 case 'application/json':
                 case 'application/json; charset=UTF-8':
-                    $json = json_decode(file_get_contents($item->_('url')),true);
+                    $json = json_decode(file_get_contents($item->_('url')), true);
                     foreach ($json[0] as $name => $value) :
                         $header[] = $name;
                     endforeach;
                     break;
             endswitch;
 
-            if(count($header) > 0 ) :
+            if (count($header) > 0) :
                 $header = array_combine($header, $header);
                 /** @var Datagroup $datagroup */
                 $datagroup = Datagroup::findById($item->_('datagroup'));
@@ -66,13 +61,13 @@ class UrlImportHelper extends AbstractImportHelper
                         (new Attributes())->setRequired((bool)$datafieldValue['required'])
                             ->setOptions(ElementHelper::arrayToSelectOptions($header))
                     )->addText(
-                        $datafield->_('name').' - core',
+                        $datafield->_('name') . ' - core',
                         'importField_empty_' . $datafield->_('calling_name')
                     )->addToggle(
-                        $datafield->_('name').' - update',
+                        $datafield->_('name') . ' - update',
                         'importField_update_' . $datafield->_('calling_name')
                     )->addToggle(
-                        $datafield->_('name').' - unique',
+                        $datafield->_('name') . ' - unique',
                         'importField_unique_' . $datafield->_('calling_name')
                     );
                 endforeach;
@@ -82,18 +77,18 @@ class UrlImportHelper extends AbstractImportHelper
                 $categoryGroups = DatagroupHelper::getPathFromRoot($datagroup);
                 /** @var  Datagroup $categoryGroup */
                 foreach ($categoryGroups as $key => $categoryGroup) :
-                    if((string)$categoryGroup->getId() !== $item->_('datagroup')) :
+                    if ((string)$categoryGroup->getId() !== $item->_('datagroup')) :
                         Item::setFindValue('datagroup', (string)$categoryGroup->getId());
                         $categories = Item::findAll();
-                        if($categories) :
+                        if ($categories) :
                             foreach ($categories as $category) :
-                                $header[(string)$category->getId()] = 'Item : '.$category->_('name');
+                                $header[(string)$category->getId()] = 'Item : ' . $category->_('name');
                             endforeach;
                         endif;
 
                         $form->addDropdown(
-                            '%IMPORT_CATEGORY% : '.$categoryGroup->_('name'),
-                            'category_'.$key,
+                            '%IMPORT_CATEGORY% : ' . $categoryGroup->_('name'),
+                            'category_' . $key,
                             (new Attributes())->setRequired(true)
                                 ->setOptions(ElementHelper::arrayToSelectOptions($header))
                         );
@@ -101,5 +96,10 @@ class UrlImportHelper extends AbstractImportHelper
                 endforeach;
             endif;
         endif;
+    }
+
+    public function processImport(?ImportType $importType = null): void
+    {
+        die('processImport');
     }
 }

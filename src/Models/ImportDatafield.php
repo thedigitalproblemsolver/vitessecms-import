@@ -9,27 +9,23 @@ class ImportDatafield extends Datafield
     /**
      * @var string
      */
+    public $imageFolder;
+    /**
+     * @var string
+     */
     protected $header;
-
     /**
      * @var string
      */
     protected $emptyValue;
-
     /**
      * @var bool
      */
     protected $update;
-
     /**
      * @var bool
      */
     protected $unique;
-
-    /**
-     * @var string
-     */
-    public $imageFolder;
 
     public function getSource()
     {
