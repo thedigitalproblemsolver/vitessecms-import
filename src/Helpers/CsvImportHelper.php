@@ -16,11 +16,11 @@ class CsvImportHelper extends AbstractImportHelper
 
         if (($handle = fopen($this->file->getTempName(), "r")) !== false) :
             while (($data = fgetcsv($handle, 1000, ",")) !== false) :
-                if($row === 1 ) :
+                if ($row === 1) :
                     $mappedFields = array_flip($data);
                 else :
                     $new = false;
-                    if( isset($data[$mappedFields['id']]) && !empty($data[$mappedFields['id']]) ) :
+                    if (isset($data[$mappedFields['id']]) && !empty($data[$mappedFields['id']])) :
                         $this->class::setFindPublished(false);
                         $item = $this->class::findById($data[$mappedFields['id']]);
                     else :
@@ -29,22 +29,22 @@ class CsvImportHelper extends AbstractImportHelper
                     endif;
 
                     foreach ($this->fields as $key => $field) :
-                        if(
-                            isset($mappedFields[$field['name']])
+                        if (
+                        isset($mappedFields[$field['name']])
                         ) :
-                            if(isset($field['datafield']) && $field['datafield']) :
+                            if (isset($field['datafield']) && $field['datafield']) :
                                 switch ($field['datafield']->_('type')) :
                                     case 'FieldModel':
                                         $name = 'name';
                                         $value = $data[$mappedFields[$field['name']]];
-                                        if( $field['datafield']->_('model') === TaxRate::class) :
+                                        if ($field['datafield']->_('model') === TaxRate::class) :
                                             $name = 'taxrate';
                                             $value = (int)$value;
                                         endif;
                                         /** @var AbstractCollection $modelClass */
                                         $modelClass = $field['datafield']->_('model');
                                         $modelClass::setFindPublished(false);
-                                        $modelClass::setFindValue($name , $value );
+                                        $modelClass::setFindValue($name, $value);
                                         $model = $modelClass::findFirst();
                                         $data[$mappedFields[$field['name']]] = (string)$model->getId();
                                         break;
@@ -55,8 +55,8 @@ class CsvImportHelper extends AbstractImportHelper
                                 endswitch;
                             endif;
 
-                            if( $field['multilang'] === true ) :
-                                if($new) :
+                            if ($field['multilang'] === true) :
+                                if ($new) :
                                     $item->set(
                                         $field['name'],
                                         $data[$mappedFields[$field['name']]],

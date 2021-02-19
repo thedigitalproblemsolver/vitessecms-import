@@ -10,29 +10,25 @@ use VitesseCms\Import\Helpers\AbstractImportHelperInterface;
 class ImportType extends AbstractCollection
 {
     /**
-     * @var AbstractImportHelperInterface
-     */
-    protected $importHelper;
-
-    /**
      * @var string
      */
     public $type;
-
     /**
      * @var string
      */
     public $language;
-
     /**
      * @var string
      */
     public $datagroup;
-
     /**
      * @var string
      */
     public $imageFolder;
+    /**
+     * @var AbstractImportHelperInterface
+     */
+    protected $importHelper;
 
     public function afterFetch()
     {
@@ -87,7 +83,7 @@ class ImportType extends AbstractCollection
     {
         if (
             substr_count($this->type, 'VitesseCms\\Import\\Helpers')
-            || substr_count($this->type, 'VitesseCms\\'.ucfirst($account).'\\Import\\Helpers')
+            || substr_count($this->type, 'VitesseCms\\' . ucfirst($account) . '\\Import\\Helpers')
         ) :
             return $this->type;
         endif;

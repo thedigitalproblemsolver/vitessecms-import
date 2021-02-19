@@ -39,7 +39,8 @@ class RepositoryCollection
         DatagroupRepository $datagroupRepository,
         ItemRepository $itemRepository,
         ImportDatafieldRepository $importDatafieldRepository
-    ) {
+    )
+    {
         $this->importType = $importTypeRepository;
         $this->language = $languageRepository;
         $this->datagroup = $datagroupRepository;
