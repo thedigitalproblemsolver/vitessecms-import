@@ -6,6 +6,7 @@ use VitesseCms\Datagroup\Models\Datagroup;
 use VitesseCms\Form\AbstractForm;
 use VitesseCms\Form\Helpers\ElementHelper;
 use VitesseCms\Form\Models\Attributes;
+use VitesseCms\Import\Helpers\AbstractImportHelper;
 use VitesseCms\Import\Models\ImportType;
 use VitesseCms\Import\Utils\ImportUtil;
 use Phalcon\Tag;
@@ -16,8 +17,8 @@ class ImportTypeForm extends AbstractForm
     {
         $files = ImportUtil::getImporters(
             [
-                $this->configuration->getVendorNameDir() . 'import/src/helpers/',
-                $this->configuration->getAccountDir() . 'src/import/helpers/'
+                $this->configuration->getVendorNameDir() . 'import/src/Helpers/',
+                $this->configuration->getAccountDir() . 'src/import/Helpers/',
             ]
         );
 
@@ -33,8 +34,10 @@ class ImportTypeForm extends AbstractForm
             )
             ->addText('Image folder', 'imageFolder', (new Attributes())->setRequired(true));
 
-        if ($item->hasType()) :
-            $item->getTypeClass($this->configuration->getAccount())::buildAdminForm($this, $item);
+        if ($item->getType() !== null) :
+            /** @var AbstractImportHelper $class */
+            $class = $item->getType();
+            $class::buildAdminForm($this, $item);
         endif;
 
         if ($item->getId()) :

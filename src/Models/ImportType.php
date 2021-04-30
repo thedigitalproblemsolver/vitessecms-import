@@ -79,6 +79,18 @@ class ImportType extends AbstractCollection
         return $this->type !== null;
     }
 
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): ImportType
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
     public function getTypeClass(string $account): string
     {
         if (
