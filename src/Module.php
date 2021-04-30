@@ -4,6 +4,7 @@ namespace VitesseCms\Import;
 
 use VitesseCms\Content\Repositories\ItemRepository;
 use VitesseCms\Core\AbstractModule;
+use VitesseCms\Datafield\Repositories\DatafieldRepository;
 use VitesseCms\Datagroup\Repositories\DatagroupRepository;
 use VitesseCms\Import\Repositories\ImportDatafieldRepository;
 use VitesseCms\Import\Repositories\RepositoryCollection;
@@ -22,7 +23,8 @@ class Module extends AbstractModule
             new LanguageRepository(),
             new DatagroupRepository(),
             new ItemRepository(),
-            new ImportDatafieldRepository()
+            new ImportDatafieldRepository(),
+            new DatafieldRepository()
         ));
     }
 }
