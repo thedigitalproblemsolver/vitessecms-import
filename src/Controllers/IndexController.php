@@ -2,6 +2,7 @@
 
 namespace VitesseCms\Import\Controllers;
 
+use VitesseCms\Content\Controllers\AdminitemController;
 use VitesseCms\Content\Factories\ItemFactory;
 use VitesseCms\Content\Models\Item;
 use VitesseCms\Core\AbstractController;
@@ -28,6 +29,7 @@ class IndexController extends AbstractController implements RepositoriesInterfac
         set_time_limit(300);
         $redirect = true;
         $this->parseUpdateOnly = true;
+        $adminitemController = new AdminitemController();
 
         if ($this->dispatcher->getParam(0)):
             $importType = $this->repositories->importType->getById($this->dispatcher->getParam(0));
@@ -94,7 +96,8 @@ class IndexController extends AbstractController implements RepositoriesInterfac
                             $this->parseUpdateOnly
                         );
 
-                        $this->eventsManager->fire(Item::class . ':beforeModelSave', $item, $this);
+                        $this->eventsManager->fire(self::class.':beforeModelSave', $this, $item);
+                        $this->eventsManager->fire(AdminitemController::class.':beforeModelSave', $adminitemController, $item);
                         $item->save();
 
                         if ($parentItem !== null):
