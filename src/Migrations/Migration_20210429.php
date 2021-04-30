@@ -5,6 +5,7 @@ namespace VitesseCms\Import\Migrations;
 use VitesseCms\Cli\Services\TerminalServiceInterface;
 use VitesseCms\Configuration\Services\ConfigServiceInterface;
 use VitesseCms\Content\Repositories\ItemRepository;
+use VitesseCms\Datafield\Repositories\DatafieldRepository;
 use VitesseCms\Datagroup\Repositories\DatagroupRepository;
 use VitesseCms\Import\Repositories\ImportDatafieldRepository;
 use VitesseCms\Import\Repositories\ImportTypeRepository;
@@ -26,7 +27,8 @@ class Migration_20210429 implements MigrationInterface
             new LanguageRepository(),
             new DatagroupRepository(),
             new ItemRepository(),
-            new ImportDatafieldRepository()
+            new ImportDatafieldRepository(),
+            new DatafieldRepository()
         );
     }
 
