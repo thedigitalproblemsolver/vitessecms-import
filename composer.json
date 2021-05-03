@@ -21,7 +21,7 @@
     "vitessecms/datagroup": "~0.0.8",
     "vitessecms/datafield": "~0.0.10",
     "vitessecms/admin": "~0.0.26",
-    "vitessecms/content": "~0.0.15",
+    "vitessecms/content": "~0.0.16",
     "vitessecms/core": "~0.0.19",
     "vitessecms/database": "~0.0.5",
     "vitessecms/language": "~0.0.2",
