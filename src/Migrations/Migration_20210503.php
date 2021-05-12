@@ -13,7 +13,7 @@ use VitesseCms\Import\Repositories\RepositoryCollection;
 use VitesseCms\Install\Interfaces\MigrationInterface;
 use VitesseCms\Language\Repositories\LanguageRepository;
 
-class Migration_20210429 implements MigrationInterface
+class Migration_20210503 implements MigrationInterface
 {
     /**
      * @var RepositoryCollection
