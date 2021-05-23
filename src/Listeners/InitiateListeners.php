@@ -10,7 +10,6 @@ class InitiateListeners
     {
         $eventsManager->attach('FieldImage', new ImportFieldImageListener());
         $eventsManager->attach('FieldPrice', new ImportFieldPriceListener());
-        $eventsManager->attach('FieldDatagroup', new ImportFieldDatagroupListener());
         $eventsManager->attach('adminMenu', new AdminMenuListener());
     }
 }
