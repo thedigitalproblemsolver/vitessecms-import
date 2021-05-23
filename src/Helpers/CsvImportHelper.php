@@ -2,9 +2,11 @@
 
 namespace VitesseCms\Import\Helpers;
 
+use VitesseCms\Content\Fields\Model;
 use VitesseCms\Database\AbstractCollection;
 use VitesseCms\Import\Models\ImportType;
 use Phalcon\Forms\Element\Check;
+use VitesseCms\Shop\Fields\ShopPrice;
 use VitesseCms\Shop\Models\TaxRate;
 
 class CsvImportHelper extends AbstractImportHelper
@@ -33,8 +35,8 @@ class CsvImportHelper extends AbstractImportHelper
                         isset($mappedFields[$field['name']])
                         ) :
                             if (isset($field['datafield']) && $field['datafield']) :
-                                switch ($field['datafield']->_('type')) :
-                                    case 'FieldModel':
+                                switch ($field['datafield']->getType()) :
+                                    case Model::class:
                                         $name = 'name';
                                         $value = $data[$mappedFields[$field['name']]];
                                         if ($field['datafield']->_('model') === TaxRate::class) :
@@ -48,7 +50,7 @@ class CsvImportHelper extends AbstractImportHelper
                                         $model = $modelClass::findFirst();
                                         $data[$mappedFields[$field['name']]] = (string)$model->getId();
                                         break;
-                                    case 'FieldPrice':
+                                    case ShopPrice::class:
                                         $item->set('price_sale', $data[$mappedFields['price_sale']]);
                                         $item->set('price_purchase', $data[$mappedFields['price_purchase']]);
                                         break;
