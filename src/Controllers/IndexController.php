@@ -361,7 +361,7 @@ class IndexController extends AbstractController implements RepositoriesInterfac
                 || ($parseUpdateOnly === true && $datafield->isUpdate())
             ) :
                 if (!$datafield->isMultilang()) :
-                    $this->eventsManager->fire($datafield->getFieldType() . ':parse', $item, $datafield);
+                    $this->eventsManager->fire($datafield->getType() . ':parse', $item, $datafield);
                 endif;
             endif;
             $fieldsToParse->next();
