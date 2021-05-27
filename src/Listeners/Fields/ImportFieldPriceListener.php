@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace VitesseCms\Import\Listeners;
+namespace VitesseCms\Import\Listeners\Fields;
 
 use VitesseCms\Content\Models\Item;
 use VitesseCms\Import\Models\ImportDatafield;
