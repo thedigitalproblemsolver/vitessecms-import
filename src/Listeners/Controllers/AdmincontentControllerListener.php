@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace VitesseCms\Import\Listeners;
+namespace VitesseCms\Import\Listeners\Controllers;
 
 use Phalcon\Events\Event;
 use VitesseCms\Admin\AbstractAdminController;
@@ -8,11 +8,7 @@ use VitesseCms\Admin\Forms\AdminlistFormInterface;
 
 class AdmincontentControllerListener
 {
-    public function adminListFilter(
-        Event $event,
-        AbstractAdminController $controller,
-        AdminlistFormInterface $form
-    ): string
+    public function adminListFilter(Event $event, AbstractAdminController $controller, AdminlistFormInterface $form): string
     {
         $form->addText('%CORE_NAME%', 'filter[name]');
         $form->addPublishedField($form);
