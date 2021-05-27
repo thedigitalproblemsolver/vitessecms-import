@@ -12,8 +12,10 @@ class InitiateListeners implements InitiateListenersInterface
 {
     public static function setListeners(InjectableInterface $di): void
     {
+        if($di->user->hasAdminAccess()):
+            $di->eventsManager->attach('adminMenu', new AdminMenuListener());
+        endif;
         $di->eventsManager->attach('FieldImage', new ImportFieldImageListener());
         $di->eventsManager->attach('FieldPrice', new ImportFieldPriceListener());
-        $di->eventsManager->attach('adminMenu', new AdminMenuListener());
     }
 }
