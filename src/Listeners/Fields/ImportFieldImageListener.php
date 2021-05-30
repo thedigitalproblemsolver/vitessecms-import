@@ -2,17 +2,37 @@
 
 namespace VitesseCms\Import\Listeners\Fields;
 
+use VitesseCms\Configuration\Services\ConfigServiceInterface;
 use VitesseCms\Content\Models\Item;
+use VitesseCms\Core\Services\UrlService;
 use VitesseCms\Core\Utils\FileUtil;
 use VitesseCms\Import\Models\ImportDatafield;
 use Phalcon\Events\Event;
 
 class ImportFieldImageListener
 {
+    /**
+     * @var ConfigServiceInterface
+     */
+    private $configurationService;
+
+    /**
+     * @var UrlService
+     */
+    private $urlService;
+
+    public function __construct(
+        ConfigServiceInterface $configService,
+        UrlService $urlService
+    ){
+        $this->configurationService = $configService;
+        $this->urlService = $urlService;
+    }
+
     public function parse(Event $event, Item $item, ImportDatafield $importDatafield): void
     {
-        $configuration = $item->getDI()->getConfiguration();
-        $url = $item->getDI()->getUrl();
+        $configuration = $this->configurationService;
+        $url = $this->urlService;
 
         $itemValue = $item->_($importDatafield->getCallingName());
         if (
