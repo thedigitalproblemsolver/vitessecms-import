@@ -7,6 +7,7 @@ use VitesseCms\Core\Interfaces\InjectableInterface;
 use VitesseCms\Import\Listeners\Admin\AdminMenuListener;
 use VitesseCms\Import\Listeners\Fields\ImportFieldImageListener;
 use VitesseCms\Import\Listeners\Fields\ImportFieldPriceListener;
+use VitesseCms\Media\Fields\Image;
 
 class InitiateListeners implements InitiateListenersInterface
 {
@@ -15,7 +16,10 @@ class InitiateListeners implements InitiateListenersInterface
         if($di->user->hasAdminAccess()):
             $di->eventsManager->attach('adminMenu', new AdminMenuListener());
         endif;
-        $di->eventsManager->attach('FieldImage', new ImportFieldImageListener());
+        $di->eventsManager->attach(Image::class, new ImportFieldImageListener(
+            $di->configuration,
+            $di->url
+        ));
         $di->eventsManager->attach('FieldPrice', new ImportFieldPriceListener());
     }
 }
