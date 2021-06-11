@@ -18,12 +18,12 @@
     }
   },
   "require": {
-    "vitessecms/datagroup": "~0.2.8",
+    "vitessecms/datagroup": "~0.2.9",
     "vitessecms/datafield": "~0.2.11",
     "vitessecms/admin": "~0.2.4",
     "vitessecms/content": "~0.2.11",
-    "vitessecms/core": "~0.2.8",
-    "vitessecms/database": "~0.2.2",
+    "vitessecms/core": "~0.2.9",
+    "vitessecms/database": "~0.2.3",
     "vitessecms/language": "~0.2.2",
     "vitessecms/form": "~0.2.7"
   }
