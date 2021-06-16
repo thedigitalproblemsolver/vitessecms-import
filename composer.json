@@ -23,7 +23,7 @@
     "vitessecms/admin": "~0.2.4",
     "vitessecms/content": "~0.2.11",
     "vitessecms/core": "~0.2.10",
-    "vitessecms/database": "~0.2.3",
+    "vitessecms/database": "~0.2.4",
     "vitessecms/language": "~0.2.2",
     "vitessecms/form": "~0.2.7"
   }
