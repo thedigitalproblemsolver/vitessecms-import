@@ -11,6 +11,7 @@ use VitesseCms\Datagroup\Models\DatagroupIterator;
 use VitesseCms\Database\Models\FindValue;
 use VitesseCms\Database\Models\FindValueIterator;
 use VitesseCms\Database\Utils\MongoUtil;
+use VitesseCms\Import\Helpers\AbstractImportHelper;
 use VitesseCms\Import\Models\ImportDatafieldIterator;
 use VitesseCms\Import\Models\ImportType;
 use VitesseCms\Import\Repositories\RepositoriesInterface;
@@ -38,6 +39,7 @@ class IndexController extends AbstractController implements RepositoriesInterfac
                 die();
             }
 
+            /** @var AbstractImportHelper $importHelper */
             $importHelper = $importType->getImportHelper();
             if ($importHelper !== null) :
                 $language = $this->repositories->language->getById($importType->getLanguage());
@@ -112,9 +114,18 @@ class IndexController extends AbstractController implements RepositoriesInterfac
 
         if ($redirect) :
             $this->redirect();
+        else :
+            $content = $this->view->renderTemplate(
+                'import_result',
+                $this->configuration->getVendorNameDir() . 'import/src/Resources/views/admin/',
+                [
+                    'createdItems' => $importHelper->getCreatedItems(),
+                    'updatedItems' => $importHelper->getUpdatedItems()
+                ]
+            );
+            $this->view->set('content',$content);
+            $this->prepareView();
         endif;
-
-        $this->view->disable();
     }
 
     protected function getFieldsToParse(ImportType $importType, Datagroup $datagroup): ImportDatafieldIterator

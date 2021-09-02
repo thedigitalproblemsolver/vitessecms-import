@@ -38,9 +38,15 @@ abstract class AbstractImportHelper extends AbstractInjectable implements Abstra
      */
     protected $fields;
 
+    protected $updatedItems;
+
+    protected $createdItems;
+
     public function __construct()
     {
         $this->di = new InjectableHelper();
+        $this->updatedItems = [];
+        $this->createdItems = [];
     }
 
     public static function buildAdminForm(ImportTypeForm $form, ImportType $item): void
@@ -76,5 +82,35 @@ abstract class AbstractImportHelper extends AbstractInjectable implements Abstra
     public function isNew(): bool
     {
         return false;
+    }
+
+    public function getUpdatedItems(): array
+    {
+        return $this->updatedItems;
+    }
+
+    public function addUpdatedItems(string $itemName, string $slug): AbstractImportHelper
+    {
+        $this->updatedItems[] = [
+            'name' => $itemName,
+            'slug' => $slug
+        ];
+
+        return $this;
+    }
+
+    public function getCreatedItems(): array
+    {
+        return $this->createdItems;
+    }
+
+    public function addCreatedItems(string $itemName, string $slug): AbstractImportHelper
+    {
+        $this->createdItems[] = [
+            'name' => $itemName,
+            'slug' => $slug
+        ];
+
+        return $this;
     }
 }
