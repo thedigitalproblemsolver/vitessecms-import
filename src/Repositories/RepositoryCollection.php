@@ -7,7 +7,7 @@ use VitesseCms\Datafield\Repositories\DatafieldRepository;
 use VitesseCms\Datagroup\Repositories\DatagroupRepository;
 use VitesseCms\Language\Repositories\LanguageRepository;
 
-class RepositoryCollection
+class RepositoryCollection implements RepositoryInterface
 {
     /**
      * @var ImportTypeRepository

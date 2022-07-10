@@ -2,35 +2,20 @@
 
 namespace VitesseCms\Import\Controllers;
 
-use VitesseCms\Content\Controllers\AdminitemController;
-use VitesseCms\Content\Factories\ItemFactory;
-use VitesseCms\Content\Models\Item;
 use VitesseCms\Core\AbstractController;
 use VitesseCms\Datagroup\Models\Datagroup;
-use VitesseCms\Datagroup\Models\DatagroupIterator;
-use VitesseCms\Database\Models\FindValue;
-use VitesseCms\Database\Models\FindValueIterator;
-use VitesseCms\Database\Utils\MongoUtil;
+use VitesseCms\Import\Enum\ImportEnum;
 use VitesseCms\Import\Helpers\AbstractImportHelper;
+use VitesseCms\Import\Helpers\ImportLineEventHelper;
 use VitesseCms\Import\Models\ImportDatafieldIterator;
 use VitesseCms\Import\Models\ImportType;
 use VitesseCms\Import\Repositories\RepositoriesInterface;
-use VitesseCms\Language\Models\Language;
 
 class IndexController extends AbstractController implements RepositoriesInterface
 {
-    /**
-     * @var bool
-     * @deprecated find another way to parse this
-     */
-    protected $parseUpdateOnly;
-
     public function IndexAction(): void
     {
         set_time_limit(300);
-        $redirect = true;
-        $this->parseUpdateOnly = true;
-        $adminitemController = new AdminitemController();
 
         if ($this->dispatcher->getParam(0)):
             $importType = $this->repositories->importType->getById($this->dispatcher->getParam(0));
@@ -59,73 +44,22 @@ class IndexController extends AbstractController implements RepositoriesInterfac
                     $headerNameField = $this->getNameField($fieldsToParse);
 
                     foreach ($importData as $data) :
-                        $parentId = null;
-                        $parentItem = $this->getItemFromDatagroupPath(
-                            $this->repositories->datagroup->getPathFromRoot($datagroup),
+                        $this->eventsManager->fire(ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT, ImportLineEventHelper::create(
+                            $datagroup,
                             $importType,
                             $data,
                             $header,
-                            $language
-                        );
-
-                        if ($parentItem === null):
-                            echo 'No parent item is found';
-                            die();
-                        endif;
-
-                        $item = $this->getBaseItem(
-                            $uniqueFields,
                             $language,
-                            $data,
-                            $header,
-                            $importType,
-                            $parentItem,
-                            $headerNameField
-                        );
-
-                        $item = $this->parseFields(
-                            $fieldsToParse,
-                            $this->parseUpdateOnly,
-                            $data,
-                            $header,
-                            $item,
-                            $language
-                        );
-
-                        $item = $this->parseFieldsImportValue(
-                            $item,
-                            $fieldsToParse,
-                            $this->parseUpdateOnly
-                        );
-
-                        $this->eventsManager->fire(self::class.':beforeModelSave', $this, $item);
-                        $this->eventsManager->fire(AdminitemController::class.':beforeModelSave', $adminitemController, $item);
-                        $item->save();
-
-                        if ($parentItem !== null):
-                            $this->setParentItemImage($item, $parentItem);
-                        endif;
+                            $uniqueFields,
+                            $headerNameField,
+                            $fieldsToParse
+                        ));
                     endforeach;
                 endif;
-
-                $redirect = false;
             endif;
         endif;
 
-        if ($redirect) :
-            $this->redirect();
-        else :
-            $content = $this->view->renderTemplate(
-                'import_result',
-                $this->configuration->getVendorNameDir() . 'import/src/Resources/views/admin/',
-                [
-                    'createdItems' => $importHelper->getCreatedItems(),
-                    'updatedItems' => $importHelper->getUpdatedItems()
-                ]
-            );
-            $this->view->set('content',$content);
-            $this->prepareView();
-        endif;
+        $this->redirect();
     }
 
     protected function getFieldsToParse(ImportType $importType, Datagroup $datagroup): ImportDatafieldIterator
@@ -228,168 +162,5 @@ class IndexController extends AbstractController implements RepositoriesInterfac
         $fieldsToParse->rewind();
 
         return 'name';
-    }
-
-    protected function getItemFromDatagroupPath(
-        DatagroupIterator $categoryGroups,
-        ImportType $importType,
-        array $data,
-        array $header,
-        Language $language
-    ): ?Item
-    {
-        $parentId = null;
-        $parentItem = null;
-
-        while ($categoryGroups->valid()) :
-            $categoryGroup = $categoryGroups->current();
-            $key = $categoryGroups->key();
-            if ((string)$categoryGroup->getId() !== $importType->getDatagroup()) :
-                $parentTitle = null;
-                $parentItem = null;
-
-                if (MongoUtil::isObjectId($importType->_('category_' . $key))) :
-                    $item = $this->repositories->item->getById($importType->_('category_' . $key));
-                    if ($item !== null) :
-                        $parentTitle = $item->getNameField();
-                    endif;
-                else :
-                    $parentTitle = $data[$header[$importType->_('category_' . $key)]];
-                endif;
-
-                if ($parentTitle !== null) :
-                    $parentItem = $this->repositories->item->findFirst(
-                        new FindValueIterator([
-                            new FindValue('datagroup', (string)$categoryGroup->getId()),
-                            new FindValue('parentId', $parentId),
-                            new FindValue('name.' . $language->getShortCode(), $parentTitle),
-                        ]),
-                        false
-                    );
-                endif;
-
-                if ($parentItem === null) :
-                    $parentItem = ItemFactory::create(
-                        $parentTitle,
-                        (string)$categoryGroup->getId(),
-                        [],
-                        true,
-                        $parentId
-                    );
-                    $parentItem->save();
-                endif;
-                $parentId = (string)$parentItem->getId();
-            endif;
-            $categoryGroups->next();
-        endwhile;
-
-        return $parentItem;
-    }
-
-    protected function getBaseItem(
-        array $uniqueFields,
-        Language $language,
-        array $data,
-        array $header,
-        ImportType $importType,
-        Item $parentItem,
-        $headerNameField
-    ): Item
-    {
-        foreach ($uniqueFields as $calling_name => $headerField) :
-            Item::setFindValue(
-                $calling_name . '.' . $language->getShortCode(),
-                $data[$header[$headerField]]
-            );
-        endforeach;
-
-        Item::setFindPublished(false);
-        Item::setFindValue('datagroup', $importType->_('datagroup'));
-        Item::setFindValue('parentId', (string)$parentItem->getId());
-        $item = Item::findFirst();
-        $this->parseUpdateOnly = true;
-        if (!$item) :
-            $item = ItemFactory::create(
-                $data[$header[$headerNameField]],
-                $importType->_('datagroup'),
-                [],
-                true,
-                (string)$parentItem->getId()
-            );
-            $this->parseUpdateOnly = false;
-        endif;
-
-        return $item;
-    }
-
-    protected function parseFields(
-        ImportDatafieldIterator $fieldsToParse,
-        bool $parseUpdateOnly,
-        array $data,
-        array $header,
-        Item $item,
-        Language $language
-    ): Item
-    {
-        while ($fieldsToParse->valid()) :
-            $datafield = $fieldsToParse->current();
-            if (
-                $parseUpdateOnly === false
-                || ($parseUpdateOnly === true && $datafield->isUpdate())
-            ) :
-                $value = '';
-                if (isset($header[$datafield->getHeader()], $data[$header[$datafield->getHeader()]])) :
-                    $value = $data[$header[$datafield->getHeader()]];
-                endif;
-
-                if (empty($value)) :
-                    $value = $datafield->getEmptyValue();
-                endif;
-
-                if ($datafield->isMultilang()) :
-                    $item->set($datafield->getCallingName(), $value, true, $language->getShortCode());
-                else :
-                    $item->set($datafield->getCallingName(), $value);
-                endif;
-            endif;
-            $fieldsToParse->next();
-        endwhile;
-        $fieldsToParse->rewind();
-
-        return $item;
-    }
-
-    protected function parseFieldsImportValue(
-        Item $item,
-        ImportDatafieldIterator $fieldsToParse,
-        $parseUpdateOnly
-    ): Item
-    {
-        while ($fieldsToParse->valid()) :
-            $datafield = $fieldsToParse->current();
-            if (
-                $parseUpdateOnly === false
-                || ($parseUpdateOnly === true && $datafield->isUpdate())
-            ) :
-                if (!$datafield->isMultilang()) :
-                    $this->eventsManager->fire($datafield->getType() . ':parse', $item, $datafield);
-                endif;
-            endif;
-            $fieldsToParse->next();
-        endwhile;
-        $fieldsToParse->rewind();
-
-        return $item;
-    }
-
-    protected function setParentItemImage(Item $item, Item $parentItem): void
-    {
-        if (
-            $parentItem->_('image') === ''
-            && $item->_('image') !== ''
-        ) :
-            $parentItem->set('image', $item->_('image'));
-            $parentItem->save();
-        endif;
     }
 }
