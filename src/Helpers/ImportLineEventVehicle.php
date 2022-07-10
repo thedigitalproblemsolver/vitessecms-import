@@ -7,7 +7,7 @@ use VitesseCms\Import\Models\ImportDatafieldIterator;
 use VitesseCms\Import\Models\ImportType;
 use VitesseCms\Language\Models\Language;
 
-class ImportLineEventHelper {
+class ImportLineEventVehicle {
 
     /**
      * @var Datagroup
@@ -49,56 +49,56 @@ class ImportLineEventHelper {
      */
     protected $fieldsToParse;
 
-    public function setDatagroup(Datagroup $datagroup): ImportLineEventHelper
+    public function setDatagroup(Datagroup $datagroup): ImportLineEventVehicle
     {
         $this->datagroup = $datagroup;
 
         return $this;
     }
 
-    public function setImportType(ImportType $importType): ImportLineEventHelper
+    public function setImportType(ImportType $importType): ImportLineEventVehicle
     {
         $this->importType = $importType;
 
         return $this;
     }
 
-    public function setData(array $data): ImportLineEventHelper
+    public function setData(array $data): ImportLineEventVehicle
     {
         $this->data = $data;
 
         return $this;
     }
 
-    public function setHeader(array $header): ImportLineEventHelper
+    public function setHeader(array $header): ImportLineEventVehicle
     {
         $this->header = $header;
 
         return $this;
     }
 
-    public function setLanguage(Language $language): ImportLineEventHelper
+    public function setLanguage(Language $language): ImportLineEventVehicle
     {
         $this->language = $language;
 
         return $this;
     }
 
-    public function setUniqueFields(array $uniqueFields): ImportLineEventHelper
+    public function setUniqueFields(array $uniqueFields): ImportLineEventVehicle
     {
         $this->uniqueFields = $uniqueFields;
 
         return $this;
     }
 
-    public function setHeaderNameField(string $headerNameField): ImportLineEventHelper
+    public function setHeaderNameField(string $headerNameField): ImportLineEventVehicle
     {
         $this->headerNameField = $headerNameField;
 
         return $this;
     }
 
-    public function setFieldsToParse(ImportDatafieldIterator $fieldsToParse): ImportLineEventHelper
+    public function setFieldsToParse(ImportDatafieldIterator $fieldsToParse): ImportLineEventVehicle
     {
         $this->fieldsToParse = $fieldsToParse;
 
