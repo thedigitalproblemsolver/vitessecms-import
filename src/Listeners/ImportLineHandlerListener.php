@@ -11,7 +11,7 @@ use VitesseCms\Database\Models\FindValue;
 use VitesseCms\Database\Models\FindValueIterator;
 use VitesseCms\Database\Utils\MongoUtil;
 use VitesseCms\Datagroup\Models\DatagroupIterator;
-use VitesseCms\Import\Helpers\ImportLineEventHelper;
+use VitesseCms\Import\Helpers\ImportLineEventVehicle;
 use VitesseCms\Import\Models\ImportDatafieldIterator;
 use VitesseCms\Import\Models\ImportType;
 use VitesseCms\Import\Repositories\RepositoryInterface;
@@ -42,7 +42,7 @@ class ImportLineHandlerListener
         $this->parseUpdateOnly = true;
     }
 
-    protected function parseLine(Event $event, ImportLineEventHelper $importLineEventHelper): void
+    protected function parseLine(Event $event, ImportLineEventVehicle $importLineEventHelper): void
     {
         $datagroup = $importLineEventHelper->getDatagroup();
         $importType = $importLineEventHelper->getImportType();

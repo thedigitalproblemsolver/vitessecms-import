@@ -6,7 +6,7 @@ use VitesseCms\Core\AbstractController;
 use VitesseCms\Datagroup\Models\Datagroup;
 use VitesseCms\Import\Enum\ImportEnum;
 use VitesseCms\Import\Helpers\AbstractImportHelper;
-use VitesseCms\Import\Helpers\ImportLineEventHelper;
+use VitesseCms\Import\Helpers\ImportLineEventVehicle;
 use VitesseCms\Import\Models\ImportDatafieldIterator;
 use VitesseCms\Import\Models\ImportType;
 use VitesseCms\Import\Repositories\RepositoriesInterface;
@@ -44,16 +44,20 @@ class IndexController extends AbstractController implements RepositoriesInterfac
                     $headerNameField = $this->getNameField($fieldsToParse);
 
                     foreach ($importData as $data) :
-                        $this->eventsManager->fire(ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT, ImportLineEventHelper::create(
-                            $datagroup,
-                            $importType,
-                            $data,
-                            $header,
-                            $language,
-                            $uniqueFields,
-                            $headerNameField,
-                            $fieldsToParse
-                        ));
+                        $this->jobQueue->createListenerJob(
+                            $importType->getNameField().' : '.ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT,
+                            ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT,
+                            ImportLineEventVehicle::create(
+                                $datagroup,
+                                $importType,
+                                $data,
+                                $header,
+                                $language,
+                                $uniqueFields,
+                                $headerNameField,
+                                $fieldsToParse
+                            )
+                        );
                     endforeach;
                 endif;
             endif;
