@@ -7,6 +7,7 @@ use Phalcon\Events\Manager;
 use VitesseCms\Content\Controllers\AdminitemController;
 use VitesseCms\Content\Factories\ItemFactory;
 use VitesseCms\Content\Models\Item;
+use VitesseCms\Core\Services\UrlService;
 use VitesseCms\Database\Models\FindValue;
 use VitesseCms\Database\Models\FindValueIterator;
 use VitesseCms\Database\Utils\MongoUtil;
@@ -16,6 +17,7 @@ use VitesseCms\Import\Models\ImportDatafieldIterator;
 use VitesseCms\Import\Models\ImportType;
 use VitesseCms\Import\Repositories\RepositoryInterface;
 use VitesseCms\Language\Models\Language;
+use VitesseCms\Log\Services\LogService;
 
 class ImportLineHandlerListener
 {
@@ -35,11 +37,27 @@ class ImportLineHandlerListener
      */
     protected $parseUpdateOnly;
 
-    public function __construct(RepositoryInterface $repositories, Manager $eventsManager)
-    {
+    /**
+     * @var LogService
+     */
+    protected $logService;
+
+    /**
+     * @var UrlService
+     */
+    protected $urlService;
+
+    public function __construct(
+        RepositoryInterface $repositories,
+        Manager $eventsManager,
+        LogService $logService,
+        UrlService $urlService
+    ){
         $this->repositories = $repositories;
         $this->eventsManager = $eventsManager;
         $this->parseUpdateOnly = true;
+        $this->logService = $logService;
+        $this->urlService = $urlService;
     }
 
     protected function parseLine(Event $event, ImportLineEventVehicle $importLineEventHelper): void
@@ -94,6 +112,12 @@ class ImportLineHandlerListener
         $this->eventsManager->fire(self::class . ':beforeModelSave', $this, $item);
         $this->eventsManager->fire(AdminitemController::class . ':beforeModelSave', new AdminitemController(), $item);
         $item->save();
+
+        $this->logService->write(
+            $item->getId(),
+            Item::class,
+            'Imported "'.$item->getNameField().'" <a href="'.$this->urlService->getBaseUri() . $item->getSlug().'" target="_blank">view page</a>'
+        );
 
         if ($parentItem !== null):
             $this->setParentItemImage($item, $parentItem);
