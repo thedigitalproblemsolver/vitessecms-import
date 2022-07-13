@@ -38,7 +38,9 @@ class InitiateListeners implements InitiateListenersInterface
                 new ImportDatafieldRepository(),
                 new DatafieldRepository()
             ),
-            $di->eventsManager
+            $di->eventsManager,
+            $di->log,
+            $di->url
         ));
     }
 }
