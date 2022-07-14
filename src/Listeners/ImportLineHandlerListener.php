@@ -139,9 +139,7 @@ class ImportLineHandlerListener
             $categoryGroup = $categoryGroups->current();
             $key = $categoryGroups->key();
             if ((string)$categoryGroup->getId() !== $importType->getDatagroup()) :
-                $parentTitle = null;
-                $parentItem = null;
-
+                $parentTitle = '';
                 if (MongoUtil::isObjectId($importType->_('category_' . $key))) :
                     $item = $this->repositories->item->getById($importType->_('category_' . $key));
                     if ($item !== null) :
@@ -151,7 +149,7 @@ class ImportLineHandlerListener
                     $parentTitle = $data[$header[$importType->_('category_' . $key)]];
                 endif;
 
-                if ($parentTitle !== null) :
+                if (!empty($parentTitle)) :
                     $parentItem = $this->repositories->item->findFirst(
                         new FindValueIterator([
                             new FindValue('datagroup', (string)$categoryGroup->getId()),
@@ -162,7 +160,7 @@ class ImportLineHandlerListener
                     );
                 endif;
 
-                if ($parentItem === null) :
+                if ($parentItem === null && !empty($parentTitle)) :
                     $parentItem = ItemFactory::create(
                         $parentTitle,
                         (string)$categoryGroup->getId(),
@@ -172,7 +170,10 @@ class ImportLineHandlerListener
                     );
                     $parentItem->save();
                 endif;
-                $parentId = (string)$parentItem->getId();
+
+                if($parentItem !== null) :
+                    $parentId = (string)$parentItem->getId();
+                endif;
             endif;
             $categoryGroups->next();
         endwhile;
