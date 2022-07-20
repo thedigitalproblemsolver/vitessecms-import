@@ -150,10 +150,16 @@ class ImportLineHandlerListener
                 endif;
 
                 if (!empty($parentTitle)) :
+                    if(empty($parentId)):
+                        $findParentId = new FindValue('parentId', [null,''], 'in');
+                    else :
+                        $findParentId = new FindValue('parentId', $parentId);
+                    endif;
+
                     $parentItem = $this->repositories->item->findFirst(
                         new FindValueIterator([
                             new FindValue('datagroup', (string)$categoryGroup->getId()),
-                            new FindValue('parentId', $parentId),
+                            $findParentId,
                             new FindValue('name.' . $language->getShortCode(), $parentTitle),
                         ]),
                         false
