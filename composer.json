@@ -26,7 +26,7 @@
     "vitessecms/database": "~0.2.6",
     "vitessecms/language": "~0.2.4",
     "vitessecms/form": "~0.2.10",
-    "vitessecms/job": "~0.2.3",
+    "vitessecms/job": "~0.2.4",
     "vitessecms/log": "~0.2.6"
   }
 }
