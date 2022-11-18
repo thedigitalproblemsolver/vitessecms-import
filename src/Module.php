@@ -10,7 +10,7 @@ use VitesseCms\Import\Repositories\ImportDatafieldRepository;
 use VitesseCms\Import\Repositories\RepositoryCollection;
 use VitesseCms\Import\Repositories\ImportTypeRepository;
 use VitesseCms\Language\Repositories\LanguageRepository;
-use Phalcon\DiInterface;
+use Phalcon\Di\DiInterface;
 
 class Module extends AbstractModule
 {
