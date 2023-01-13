@@ -23,7 +23,7 @@
     "vitessecms/admin": "~0.3.0",
     "vitessecms/content": "~0.3.0",
     "vitessecms/core": "~0.3.0",
-    "vitessecms/database": "~0.3.0",
+    "vitessecms/database": "~0.3.1",
     "vitessecms/language": "~0.3.0",
     "vitessecms/form": "~0.3.0",
     "vitessecms/job": "~0.3.0",
