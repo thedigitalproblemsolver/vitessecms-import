@@ -27,7 +27,7 @@ class UrlImportHelper extends AbstractImportHelper
         if ($item->_('url')) :
             $form->addHtml('<h2>%IMPORT_DATAFIELD_MAPPING%</h2>');
 
-            $httpHeaders = get_headers($item->_('url'), 1);
+            $httpHeaders = get_headers($item->_('url'), true);
 
             $header = [];
             switch ($httpHeaders['Content-Type'][1]) :
