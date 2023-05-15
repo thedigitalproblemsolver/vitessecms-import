@@ -3,63 +3,79 @@
 namespace VitesseCms\Import\Controllers;
 
 use VitesseCms\Core\AbstractController;
+use VitesseCms\Core\AbstractControllerFrontend;
+use VitesseCms\Datagroup\Enums\DatagroupEnum;
 use VitesseCms\Datagroup\Models\Datagroup;
+use VitesseCms\Datagroup\Repositories\DatagroupRepository;
 use VitesseCms\Import\Enum\ImportEnum;
+use VitesseCms\Import\Enum\ImportTypeEnum;
 use VitesseCms\Import\Helpers\AbstractImportHelper;
 use VitesseCms\Import\Helpers\ImportLineEventVehicle;
 use VitesseCms\Import\Models\ImportDatafieldIterator;
 use VitesseCms\Import\Models\ImportType;
+use VitesseCms\Import\Repositories\ImportTypeRepository;
 use VitesseCms\Import\Repositories\RepositoriesInterface;
+use VitesseCms\Language\Enums\LanguageEnum;
+use VitesseCms\Language\Repositories\LanguageRepository;
 
-class IndexController extends AbstractController implements RepositoriesInterface
+class IndexController extends AbstractControllerFrontend
 {
-    public function IndexAction(): void
+    private ImportTypeRepository $importTypeRepository;
+    private LanguageRepository $languageRepository;
+    private DatagroupRepository $datagroupRepository;
+
+    public function OnConstruct()
+    {
+        $this->importTypeRepository = $this->eventsManager->fire(ImportTypeEnum::GET_REPOSITORY->value, new \stdClass());
+        $this->languageRepository = $this->eventsManager->fire(LanguageEnum::GET_REPOSITORY->value, new \stdClass());
+        $this->datagroupRepository = $this->eventsManager->fire(DatagroupEnum::GET_REPOSITORY->value, new \stdClass());
+    }
+
+
+    public function IndexAction(string $id): void
     {
         set_time_limit(300);
 
-        if ($this->dispatcher->getParam(0)):
-            $importType = $this->repositories->importType->getById($this->dispatcher->getParam(0));
-            if ($importType === null) {
-                echo 'no importtype find';
-                die();
-            }
+        $importType = $this->importTypeRepository->getById($id);
+        if ($importType === null) {
+            echo 'no importtype find';
+            die();
+        }
 
-            /** @var AbstractImportHelper $importHelper */
-            $importHelper = $importType->getImportHelper();
-            if ($importHelper !== null) :
-                $language = $this->repositories->language->getById($importType->getLanguage());
-                $datagroup = $this->repositories->datagroup->getById($importType->getDatagroup());
-                if ($importHelper->isNew()) :
-                    $importHelper->processImport($importType);
-                elseif (
-                    $language !== null
-                    && $datagroup !== null
-                    && ($handle = fopen($importType->_('url'), 'rb')) !== false
-                ) :
-                    $fieldsToParse = $this->getFieldsToParse($importType, $datagroup);
-                    $parsedUrl = $this->parseUrl($importType->_('url'));
-                    $header = $parsedUrl['header'];
-                    $importData = (array)$parsedUrl['importData'];
-                    $uniqueFields = $this->getUniqueFields($fieldsToParse);
-                    $headerNameField = $this->getNameField($fieldsToParse);
+        $importHelper = $importType->getImportHelper();
+        if ($importHelper !== null) :
+            $language = $this->languageRepository->getById($importType->getLanguage());
+            $datagroup = $this->datagroupRepository->getById($importType->getDatagroup());
+            if ($importHelper->isNew()) :
+                $importHelper->processImport($importType);
+            elseif (
+                $language !== null
+                && $datagroup !== null
+                && ($handle = fopen($importType->_('url'), 'rb')) !== false
+            ) :
+                $fieldsToParse = $this->getFieldsToParse($importType, $datagroup);
+                $parsedUrl = $this->parseUrl($importType->_('url'));
+                $header = $parsedUrl['header'];
+                $importData = (array)$parsedUrl['importData'];
+                $uniqueFields = $this->getUniqueFields($fieldsToParse);
+                $headerNameField = $this->getNameField($fieldsToParse);
 
-                    foreach ($importData as $data) :
-                        $this->jobQueue->createListenerJob(
-                            $importType->getNameField().' : '.ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT,
-                            ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT,
-                            ImportLineEventVehicle::create(
-                                $datagroup,
-                                $importType,
-                                $data,
-                                $header,
-                                $language,
-                                $uniqueFields,
-                                $headerNameField,
-                                $fieldsToParse
-                            )
-                        );
-                    endforeach;
-                endif;
+                foreach ($importData as $data) :
+                    $this->jobQueue->createListenerJob(
+                        $importType->getNameField().' : '.ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT,
+                        ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT,
+                        ImportLineEventVehicle::create(
+                            $datagroup,
+                            $importType,
+                            $data,
+                            $header,
+                            $language,
+                            $uniqueFields,
+                            $headerNameField,
+                            $fieldsToParse
+                        )
+                    );
+                endforeach;
             endif;
         endif;
 

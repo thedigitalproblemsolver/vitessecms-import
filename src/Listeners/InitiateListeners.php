@@ -8,6 +8,7 @@ use VitesseCms\Core\Interfaces\InjectableInterface;
 use VitesseCms\Datafield\Repositories\DatafieldRepository;
 use VitesseCms\Datagroup\Repositories\DatagroupRepository;
 use VitesseCms\Import\Enum\ImportEnum;
+use VitesseCms\Import\Enum\ImportTypeEnum;
 use VitesseCms\Import\Listeners\Admin\AdminMenuListener;
 use VitesseCms\Import\Listeners\Fields\ImportFieldImageListener;
 use VitesseCms\Import\Listeners\Fields\ImportFieldPriceListener;
@@ -29,6 +30,7 @@ class InitiateListeners implements InitiateListenersInterface
             $di->url
         ));
         $di->eventsManager->attach('FieldPrice', new ImportFieldPriceListener());
+        $di->eventsManager->attach(ImportTypeEnum::IMPORTTYPE_LISTENER->value, new ImportTypeListener(new ImportTypeRepository()));
         $di->eventsManager->attach(ImportEnum::IMPORT_HANDLER_LISTENER, new ImportLineHandlerListener(
             new RepositoryCollection(
                 new ImportTypeRepository(),
