@@ -22,7 +22,7 @@
     "vitessecms/datafield": "^1.0.0",
     "vitessecms/admin": "^1.0.0",
     "vitessecms/content": "^1.0.0",
-    "vitessecms/core": "^1.0.0",
+    "vitessecms/core": "^1.1.0",
     "vitessecms/database": "^1.0.0",
     "vitessecms/language": "^1.0.0",
     "vitessecms/form": "^1.0.0",
