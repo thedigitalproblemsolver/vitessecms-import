@@ -26,11 +26,11 @@ class IndexController extends AbstractControllerFrontend
 
     public function OnConstruct()
     {
+        parent::onConstruct();
         $this->importTypeRepository = $this->eventsManager->fire(ImportTypeEnum::GET_REPOSITORY->value, new \stdClass());
         $this->languageRepository = $this->eventsManager->fire(LanguageEnum::GET_REPOSITORY->value, new \stdClass());
         $this->datagroupRepository = $this->eventsManager->fire(DatagroupEnum::GET_REPOSITORY->value, new \stdClass());
     }
-
 
     public function IndexAction(string $id): void
     {
