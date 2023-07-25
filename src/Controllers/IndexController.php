@@ -65,7 +65,7 @@ class IndexController extends AbstractControllerFrontend
                     $this->jobQueue->createListenerJob(
                         $importType->getNameField().' : '.ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT,
                         ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT,
-                        ImportLineEventVehicle::create(
+                        new ImportLineEventVehicle(
                             $datagroup,
                             $importType,
                             $data,
