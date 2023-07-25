@@ -62,14 +62,14 @@ class ImportLineHandlerListener
 
     protected function parseLine(Event $event, ImportLineEventVehicle $importLineEventHelper): void
     {
-        $datagroup = $importLineEventHelper->getDatagroup();
-        $importType = $importLineEventHelper->getImportType();
-        $data = $importLineEventHelper->getData();
-        $header = $importLineEventHelper->getHeader();
-        $language = $importLineEventHelper->getLanguage();
-        $uniqueFields = $importLineEventHelper->getUniqueFields();
-        $headerNameField = $importLineEventHelper->getHeaderNameField();
-        $fieldsToParse = $importLineEventHelper->getFieldsToParse();
+        $datagroup = $importLineEventHelper->datagroup;
+        $importType = $importLineEventHelper->importType;
+        $data = $importLineEventHelper->data;
+        $header = $importLineEventHelper->header;
+        $language = $importLineEventHelper->language;
+        $uniqueFields = $importLineEventHelper->uniqueFields;
+        $headerNameField = $importLineEventHelper->headerNameField;
+        $fieldsToParse = $importLineEventHelper->fieldsToParse;
 
         $parentItem = $this->getItemFromDatagroupPath(
             $this->repositories->datagroup->getPathFromRoot($datagroup),
@@ -116,7 +116,7 @@ class ImportLineHandlerListener
         $this->logService->write(
             $item->getId(),
             Item::class,
-            'Imported "'.$item->getNameField().'" <a href="'.$this->urlService->getBaseUri() . $item->getSlug().'" target="_blank">view page</a>'
+            'Imported "' . $item->getNameField() . '" <a href="' . $this->urlService->getBaseUri() . $item->getSlug() . '" target="_blank">view page</a>'
         );
 
         if ($parentItem !== null):
@@ -138,6 +138,7 @@ class ImportLineHandlerListener
         while ($categoryGroups->valid()) :
             $categoryGroup = $categoryGroups->current();
             $key = $categoryGroups->key();
+
             if ((string)$categoryGroup->getId() !== $importType->getDatagroup()) :
                 $parentTitle = '';
                 if (MongoUtil::isObjectId($importType->_('category_' . $key))) :

@@ -32,6 +32,7 @@ class IndexController extends AbstractControllerFrontend
         $this->datagroupRepository = $this->eventsManager->fire(DatagroupEnum::GET_REPOSITORY->value, new \stdClass());
     }
 
+
     public function IndexAction(string $id): void
     {
         set_time_limit(300);
@@ -64,7 +65,7 @@ class IndexController extends AbstractControllerFrontend
                     $this->jobQueue->createListenerJob(
                         $importType->getNameField().' : '.ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT,
                         ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT,
-                        ImportLineEventVehicle::create(
+                        new ImportLineEventVehicle(
                             $datagroup,
                             $importType,
                             $data,
@@ -79,7 +80,7 @@ class IndexController extends AbstractControllerFrontend
             endif;
         endif;
 
-        $this->redirect();
+        $this->redirect($this->request->getHTTPReferer());
     }
 
     protected function getFieldsToParse(ImportType $importType, Datagroup $datagroup): ImportDatafieldIterator
@@ -117,7 +118,7 @@ class IndexController extends AbstractControllerFrontend
     protected function parseUrl(string $url): array
     {
         $handle = fopen($url, 'rb');
-        $httpHeaders = get_headers($url, 1);
+        $httpHeaders = get_headers($url, true);
         $header = $importData = [];
         switch (strtolower($httpHeaders['Content-Type'][1])) :
             case 'text/csv':
