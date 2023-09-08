@@ -4,13 +4,17 @@ namespace VitesseCms\Import\Controllers;
 
 use VitesseCms\Core\AbstractController;
 use VitesseCms\Core\AbstractControllerFrontend;
+use VitesseCms\Datafield\Enum\DatafieldEnum;
+use VitesseCms\Datafield\Repositories\DatafieldRepository;
 use VitesseCms\Datagroup\Enums\DatagroupEnum;
 use VitesseCms\Datagroup\Models\Datagroup;
 use VitesseCms\Datagroup\Repositories\DatagroupRepository;
 use VitesseCms\Import\Enum\ImportEnum;
 use VitesseCms\Import\Enum\ImportTypeEnum;
+use VitesseCms\Import\Factories\ImportDatafieldFactory;
 use VitesseCms\Import\Helpers\AbstractImportHelper;
 use VitesseCms\Import\Helpers\ImportLineEventVehicle;
+use VitesseCms\Import\Models\ImportDatafield;
 use VitesseCms\Import\Models\ImportDatafieldIterator;
 use VitesseCms\Import\Models\ImportType;
 use VitesseCms\Import\Repositories\ImportTypeRepository;
@@ -23,6 +27,7 @@ class IndexController extends AbstractControllerFrontend
     private ImportTypeRepository $importTypeRepository;
     private LanguageRepository $languageRepository;
     private DatagroupRepository $datagroupRepository;
+    private DatafieldRepository $datafieldRepository;
 
     public function OnConstruct()
     {
@@ -30,6 +35,7 @@ class IndexController extends AbstractControllerFrontend
         $this->importTypeRepository = $this->eventsManager->fire(ImportTypeEnum::GET_REPOSITORY->value, new \stdClass());
         $this->languageRepository = $this->eventsManager->fire(LanguageEnum::GET_REPOSITORY->value, new \stdClass());
         $this->datagroupRepository = $this->eventsManager->fire(DatagroupEnum::GET_REPOSITORY->value, new \stdClass());
+        $this->datafieldRepository = $this->eventsManager->fire(DatafieldEnum::GET_REPOSITORY->value, new \stdClass());
     }
 
 
@@ -55,6 +61,7 @@ class IndexController extends AbstractControllerFrontend
                 && ($handle = fopen($importType->_('url'), 'rb')) !== false
             ) :
                 $fieldsToParse = $this->getFieldsToParse($importType, $datagroup);
+
                 $parsedUrl = $this->parseUrl($importType->_('url'));
                 $header = $parsedUrl['header'];
                 $importData = (array)$parsedUrl['importData'];
@@ -87,27 +94,28 @@ class IndexController extends AbstractControllerFrontend
     {
         $fieldsToParse = new ImportDatafieldIterator();
         foreach ((array)$datagroup->_('datafields') as $datafieldValue) :
-            $datafield = $this->repositories->importDatafield->getById($datafieldValue['id']);
+            $datafield = $this->datafieldRepository->getById($datafieldValue['id']);
             if ($datafield !== null) :
                 if (
                     $importType->_('importField_' . $datafield->getCallingName())
                     || $importType->_('importField_empty_' . $datafield->getCallingName())
                 ) :
-                    $datafield->setHeader(
+                    $importDatafield = ImportDatafieldFactory::createFromDatefield($datafield);
+                    $importDatafield->setHeader(
                         $importType->_('importField_' . $datafield->getCallingName())
                     );
-                    $datafield->setEmptyValue(
+                    $importDatafield->setEmptyValue(
                         $importType->_('importField_empty_' . $datafield->getCallingName())
                     );
-                    $datafield->setUpdate(
+                    $importDatafield->setUpdate(
                         (bool)$importType->_('importField_update_' . $datafield->getCallingName())
                     );
-                    $datafield->setUnique(
+                    $importDatafield->setUnique(
                         (bool)$importType->_('importField_unique_' . $datafield->getCallingName())
                     );
-                    $datafield->setImageFolder($importType->getImageFolder());
+                    $importDatafield->setImageFolder($importType->getImageFolder());
 
-                    $fieldsToParse->add($datafield);
+                    $fieldsToParse->add($importDatafield);
                 endif;
             endif;
         endforeach;
