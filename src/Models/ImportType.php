@@ -64,7 +64,7 @@ class ImportType extends AbstractCollection
         return $this->language;
     }
 
-    public function getDatagroup(): string
+    public function getDatagroup(): ?string
     {
         return $this->datagroup;
     }
