@@ -6,31 +6,11 @@ use VitesseCms\Datafield\Models\Datafield;
 
 class ImportDatafield extends Datafield
 {
-    /**
-     * @var string
-     */
-    public $imageFolder;
-    /**
-     * @var string
-     */
-    protected $header;
-    /**
-     * @var string
-     */
-    protected $emptyValue;
-    /**
-     * @var bool
-     */
-    protected $update;
-    /**
-     * @var bool
-     */
-    protected $unique;
-
-    /*public function getSource()
-    {
-        return 'datafield';
-    }*/
+    protected string $imageFolder;
+    protected string $header;
+    protected string $emptyValue;
+    protected bool $update;
+    protected bool $unique;
 
     public function getHeader(): string
     {
