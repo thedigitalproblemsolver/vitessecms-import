@@ -9,46 +9,11 @@ use VitesseCms\Import\Helpers\AbstractImportHelperInterface;
 
 class ImportType extends AbstractCollection
 {
-    /**
-     * @var string
-     */
-    public $type;
-    /**
-     * @var string
-     */
-    public $language;
-    /**
-     * @var string
-     */
-    public $datagroup;
-    /**
-     * @var string
-     */
-    public $imageFolder;
-    /**
-     * @var AbstractImportHelperInterface
-     */
-    protected $importHelper;
-
-    public function afterFetch()
-    {
-        parent::afterFetch();
-
-        if (AdminUtil::isAdminPage()) :
-            $this->adminListName = Tag::linkTo([
-                    'action' => 'import/index/index/' . (string)$this->getId(),
-                    'target' => '_blank',
-                    'class' => 'fa fa-external-link'
-                ]) . '&nbsp;' .
-                Tag::linkTo(
-                    [
-                        'action' => 'admin/import/admincontent/edit/' . (string)$this->getId(),
-                        'class' => 'openmodal',
-                        'text' => $this->_('name')
-                    ]
-                );
-        endif;
-    }
+    public string $type;
+    public ?string $language;
+    public string $datagroup;
+    public string $imageFolder;
+    protected ?AbstractImportHelperInterface $importHelper;
 
     public function getImportHelper(): ?AbstractImportHelperInterface
     {
@@ -59,7 +24,7 @@ class ImportType extends AbstractCollection
         return new $this->type;
     }
 
-    public function getLanguage(): string
+    public function getLanguage(): ?string
     {
         return $this->language;
     }
