@@ -8,8 +8,10 @@ use VitesseCms\Import\Models\ImportTypeIterator;
 
 class ImportTypeRepository
 {
-    public function getById(string $id): ?ImportType
+    public function getById(string $id, bool $hideUnpublished = true): ?ImportType
     {
+        ImportType::setFindPublished($hideUnpublished);
+
         /** @var ImportType $item */
         $item = ImportType::findById($id);
         if (is_object($item)):
