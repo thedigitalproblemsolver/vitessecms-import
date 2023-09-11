@@ -2,6 +2,7 @@
 
 namespace VitesseCms\Import\Forms;
 
+use VitesseCms\Admin\Interfaces\AdminModelFormInterface;
 use VitesseCms\Datagroup\Models\Datagroup;
 use VitesseCms\Form\AbstractForm;
 use VitesseCms\Form\Helpers\ElementHelper;
@@ -11,9 +12,9 @@ use VitesseCms\Import\Models\ImportType;
 use VitesseCms\Import\Utils\ImportUtil;
 use Phalcon\Tag;
 
-class ImportTypeForm extends AbstractForm
+class ImportTypeForm extends AbstractForm implements AdminModelFormInterface
 {
-    public function initialize(ImportType $item): void
+    public function buildForm(): void
     {
         $files = ImportUtil::getImporters(
             [
@@ -22,7 +23,7 @@ class ImportTypeForm extends AbstractForm
             ]
         );
 
-        $this->addText('%CORE_NAME%', 'name', (new Attributes())->setRequired(true))
+        $this->addText('%CORE_NAME%', 'name', (new Attributes())->setRequired()->setMultilang())
             ->addDropdown(
                 '%ADMIN_DATAGROUP%',
                 'datagroup',
@@ -34,17 +35,15 @@ class ImportTypeForm extends AbstractForm
             )
             ->addText('Image folder', 'imageFolder', (new Attributes())->setRequired(true));
 
-        if ($item->getType() !== null) :
-            /** @var AbstractImportHelper $class */
-            $class = $item->getType();
-            $class::buildAdminForm($this, $item);
-        endif;
-
-        if ($item->getId()) :
+        if ($this->entity !== null) :
+            if ($this->entity->getType() !== null) :
+                /** @var AbstractImportHelper $class */
+                $class = $this->entity->getType();
+                $class::buildAdminForm($this, $this->entity);
+            endif;
             $this->addHtml(Tag::linkTo(
                 [
-                    'action' => 'import/index/index/' . $item->getId(),
-                    'target' => '_blank',
+                    'action' => 'import/index/index/' . $this->entity->getId(),
                     'text' => '%IMPORT_TRIGGER_IMPORT%'
                 ]
             ));

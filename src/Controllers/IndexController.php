@@ -84,6 +84,7 @@ class IndexController extends AbstractControllerFrontend
                         )
                     );
                 endforeach;
+                $this->flashService->setSucces('IMPORT_IMPORT_SUCCEEDED');
             endif;
         endif;
 
