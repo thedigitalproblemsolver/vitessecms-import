@@ -1,11 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace VitesseCms\Import\Models;
 
-use Phalcon\Tag;
 use VitesseCms\Database\AbstractCollection;
-use VitesseCms\Admin\Utils\AdminUtil;
 use VitesseCms\Import\Helpers\AbstractImportHelperInterface;
 
 class ImportType extends AbstractCollection
@@ -13,7 +12,7 @@ class ImportType extends AbstractCollection
     public string $type;
     public ?string $language;
     public string $datagroup;
-    public string $imageFolder;
+    public ?string $imageFolder;
     protected ?AbstractImportHelperInterface $importHelper;
 
     public function getImportHelper(): ?AbstractImportHelperInterface
