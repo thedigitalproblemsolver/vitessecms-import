@@ -1,7 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace VitesseCms\Import\Controllers;
 
+use stdClass;
 use VitesseCms\Core\AbstractController;
 use VitesseCms\Core\AbstractControllerFrontend;
 use VitesseCms\Datafield\Enum\DatafieldEnum;
@@ -32,10 +34,10 @@ class IndexController extends AbstractControllerFrontend
     public function OnConstruct()
     {
         parent::onConstruct();
-        $this->importTypeRepository = $this->eventsManager->fire(ImportTypeEnum::GET_REPOSITORY->value, new \stdClass());
-        $this->languageRepository = $this->eventsManager->fire(LanguageEnum::GET_REPOSITORY->value, new \stdClass());
-        $this->datagroupRepository = $this->eventsManager->fire(DatagroupEnum::GET_REPOSITORY->value, new \stdClass());
-        $this->datafieldRepository = $this->eventsManager->fire(DatafieldEnum::GET_REPOSITORY->value, new \stdClass());
+        $this->importTypeRepository = $this->eventsManager->fire(ImportTypeEnum::GET_REPOSITORY->value, new stdClass());
+        $this->languageRepository = $this->eventsManager->fire(LanguageEnum::GET_REPOSITORY->value, new stdClass());
+        $this->datagroupRepository = $this->eventsManager->fire(DatagroupEnum::GET_REPOSITORY->value, new stdClass());
+        $this->datafieldRepository = $this->eventsManager->fire(DatafieldEnum::GET_REPOSITORY->value, new stdClass());
     }
 
 
@@ -70,7 +72,7 @@ class IndexController extends AbstractControllerFrontend
 
                 foreach ($importData as $data) :
                     $this->jobQueue->createListenerJob(
-                        $importType->getNameField().' : '.ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT,
+                        $importType->getNameField() . ' : ' . ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT,
                         ImportEnum::IMPORT_HANDLER_PARSELINE_EVENT,
                         new ImportLineEventVehicle(
                             $datagroup,

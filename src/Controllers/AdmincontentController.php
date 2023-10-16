@@ -1,7 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace VitesseCms\Import\Controllers;
 
+use ArrayIterator;
+use stdClass;
 use VitesseCms\Admin\Interfaces\AdminModelAddableInterface;
 use VitesseCms\Admin\Interfaces\AdminModelCopyableInterface;
 use VitesseCms\Admin\Interfaces\AdminModelDeletableInterface;
@@ -26,7 +29,7 @@ use VitesseCms\Import\Forms\ImportTypeForm;
 use VitesseCms\Import\Models\ImportType;
 use VitesseCms\Import\Repositories\ImportTypeRepository;
 
-class AdmincontentController   extends AbstractControllerAdmin implements
+class AdmincontentController extends AbstractControllerAdmin implements
     AdminModelPublishableInterface,
     AdminModelListInterface,
     AdminModelEditableInterface,
@@ -34,14 +37,13 @@ class AdmincontentController   extends AbstractControllerAdmin implements
     AdminModelAddableInterface,
     AdminModelCopyableInterface
 {
-    use TraitAdminModelPublishable,
-        TraitAdminModelList,
-        TraitAdminModelEditable,
-        TraitAdminModelSave,
-        TraitAdminModelDeletable,
-        TraitAdminModelAddable,
-        TraitAdminModelCopyable
-        ;
+    use TraitAdminModelAddable;
+    use TraitAdminModelCopyable;
+    use TraitAdminModelDeletable;
+    use TraitAdminModelEditable;
+    use TraitAdminModelList;
+    use TraitAdminModelPublishable;
+    use TraitAdminModelSave;
 
     private readonly ImportTypeRepository $importTypeRepository;
 
@@ -49,7 +51,7 @@ class AdmincontentController   extends AbstractControllerAdmin implements
     {
         parent::onConstruct();
 
-        $this->importTypeRepository = $this->eventsManager->fire(ImportTypeEnum::GET_REPOSITORY->value, new \stdClass());
+        $this->importTypeRepository = $this->eventsManager->fire(ImportTypeEnum::GET_REPOSITORY->value, new stdClass());
     }
 
     public function getModel(string $id): ?AbstractCollection
@@ -60,7 +62,7 @@ class AdmincontentController   extends AbstractControllerAdmin implements
         };
     }
 
-    public function getModelList( ?FindValueIterator $findValueIterator): \ArrayIterator
+    public function getModelList(?FindValueIterator $findValueIterator): ArrayIterator
     {
         return $this->importTypeRepository->findAll(
             $findValueIterator,

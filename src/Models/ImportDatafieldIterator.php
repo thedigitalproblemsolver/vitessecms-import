@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace VitesseCms\Import\Models;
 
-class ImportDatafieldIterator extends \ArrayIterator
+use ArrayIterator;
+
+class ImportDatafieldIterator extends ArrayIterator
 {
     public function __construct(array $datafields = [])
     {
