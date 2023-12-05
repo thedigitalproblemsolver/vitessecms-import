@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace VitesseCms\Import\Listeners;
 
@@ -15,6 +16,7 @@ use VitesseCms\Import\Listeners\Fields\ImportFieldPriceListener;
 use VitesseCms\Import\Repositories\ImportDatafieldRepository;
 use VitesseCms\Import\Repositories\ImportTypeRepository;
 use VitesseCms\Import\Repositories\RepositoryCollection;
+use VitesseCms\Language\Models\Language;
 use VitesseCms\Language\Repositories\LanguageRepository;
 use VitesseCms\Media\Fields\Image;
 
@@ -22,27 +24,36 @@ class InitiateListeners implements InitiateListenersInterface
 {
     public static function setListeners(InjectableInterface $di): void
     {
-        if($di->user->hasAdminAccess()):
+        if ($di->user->hasAdminAccess()):
             $di->eventsManager->attach('adminMenu', new AdminMenuListener());
         endif;
-        $di->eventsManager->attach(Image::class, new ImportFieldImageListener(
-            $di->configuration,
-            $di->url
-        ));
+        $di->eventsManager->attach(
+            Image::class,
+            new ImportFieldImageListener(
+                $di->configuration,
+                $di->url
+            )
+        );
         $di->eventsManager->attach('FieldPrice', new ImportFieldPriceListener());
-        $di->eventsManager->attach(ImportTypeEnum::IMPORTTYPE_LISTENER->value, new ImportTypeListener(new ImportTypeRepository()));
-        $di->eventsManager->attach(ImportEnum::IMPORT_HANDLER_LISTENER, new ImportLineHandlerListener(
-            new RepositoryCollection(
-                new ImportTypeRepository(),
-                new LanguageRepository(),
-                new DatagroupRepository(),
-                new ItemRepository(),
-                new ImportDatafieldRepository(),
-                new DatafieldRepository()
-            ),
-            $di->eventsManager,
-            $di->log,
-            $di->url
-        ));
+        $di->eventsManager->attach(
+            ImportTypeEnum::IMPORTTYPE_LISTENER->value,
+            new ImportTypeListener(new ImportTypeRepository())
+        );
+        $di->eventsManager->attach(
+            ImportEnum::IMPORT_HANDLER_LISTENER,
+            new ImportLineHandlerListener(
+                new RepositoryCollection(
+                    new ImportTypeRepository(),
+                    new LanguageRepository(Language::class),
+                    new DatagroupRepository(),
+                    new ItemRepository(),
+                    new ImportDatafieldRepository(),
+                    new DatafieldRepository()
+                ),
+                $di->eventsManager,
+                $di->log,
+                $di->url
+            )
+        );
     }
 }
