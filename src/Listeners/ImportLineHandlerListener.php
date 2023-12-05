@@ -1,4 +1,5 @@
-<?php declare(strict_types=1);
+<?php
+declare(strict_types=1);
 
 namespace VitesseCms\Import\Listeners;
 
@@ -52,7 +53,7 @@ class ImportLineHandlerListener
         Manager $eventsManager,
         LogService $logService,
         UrlService $urlService
-    ){
+    ) {
         $this->repositories = $repositories;
         $this->eventsManager = $eventsManager;
         $this->parseUpdateOnly = true;
@@ -116,7 +117,8 @@ class ImportLineHandlerListener
         $this->logService->write(
             $item->getId(),
             Item::class,
-            'Imported "' . $item->getNameField() . '" <a href="' . $this->urlService->getBaseUri() . $item->getSlug() . '" target="_blank">view page</a>'
+            'Imported "' . $item->getNameField() . '" <a href="' . $this->urlService->getBaseUri() . $item->getSlug(
+            ) . '" target="_blank">view page</a>'
         );
 
         if ($parentItem !== null):
@@ -126,12 +128,11 @@ class ImportLineHandlerListener
 
     protected function getItemFromDatagroupPath(
         DatagroupIterator $categoryGroups,
-        ImportType        $importType,
-        array             $data,
-        array             $header,
-        Language          $language
-    ): ?Item
-    {
+        ImportType $importType,
+        array $data,
+        array $header,
+        Language $language
+    ): ?Item {
         $parentId = null;
         $parentItem = null;
 
@@ -141,18 +142,18 @@ class ImportLineHandlerListener
 
             if ((string)$categoryGroup->getId() !== $importType->getDatagroup()) :
                 $parentTitle = '';
-                if (MongoUtil::isObjectId($importType->_('category_' . $key))) :
+                if (MongoUtil::isObjectId($importType->_('category_' . $key))) {
                     $item = $this->repositories->item->getById($importType->_('category_' . $key));
-                    if ($item !== null) :
+                    if ($item !== null) {
                         $parentTitle = $item->getNameField();
-                    endif;
-                else :
+                    }
+                } elseif (isset($data[$header[$importType->_('category_' . $key)]])) {
                     $parentTitle = $data[$header[$importType->_('category_' . $key)]];
-                endif;
+                }
 
                 if (!empty($parentTitle)) :
-                    if(empty($parentId)):
-                        $findParentId = new FindValue('parentId', [null,''], 'in');
+                    if (empty($parentId)):
+                        $findParentId = new FindValue('parentId', [null, ''], 'in');
                     else :
                         $findParentId = new FindValue('parentId', $parentId);
                     endif;
@@ -178,7 +179,7 @@ class ImportLineHandlerListener
                     $parentItem->save();
                 endif;
 
-                if($parentItem !== null) :
+                if ($parentItem !== null) :
                     $parentId = (string)$parentItem->getId();
                 endif;
             endif;
@@ -189,15 +190,14 @@ class ImportLineHandlerListener
     }
 
     protected function getBaseItem(
-        array      $uniqueFields,
-        Language   $language,
-        array      $data,
-        array      $header,
+        array $uniqueFields,
+        Language $language,
+        array $data,
+        array $header,
         ImportType $importType,
-        Item       $parentItem,
-                   $headerNameField
-    ): Item
-    {
+        Item $parentItem,
+        $headerNameField
+    ): Item {
         foreach ($uniqueFields as $calling_name => $headerField) :
             Item::setFindValue(
                 $calling_name . '.' . $language->getShortCode(),
@@ -226,13 +226,12 @@ class ImportLineHandlerListener
 
     protected function parseFields(
         ImportDatafieldIterator $fieldsToParse,
-        bool                    $parseUpdateOnly,
-        array                   $data,
-        array                   $header,
-        Item                    $item,
-        Language                $language
-    ): Item
-    {
+        bool $parseUpdateOnly,
+        array $data,
+        array $header,
+        Item $item,
+        Language $language
+    ): Item {
         while ($fieldsToParse->valid()) :
             $datafield = $fieldsToParse->current();
             if (
@@ -262,11 +261,10 @@ class ImportLineHandlerListener
     }
 
     protected function parseFieldsImportValue(
-        Item                    $item,
+        Item $item,
         ImportDatafieldIterator $fieldsToParse,
-                                $parseUpdateOnly
-    ): Item
-    {
+        $parseUpdateOnly
+    ): Item {
         while ($fieldsToParse->valid()) :
             $datafield = $fieldsToParse->current();
             if (
