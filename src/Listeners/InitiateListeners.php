@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace VitesseCms\Import\Listeners;
@@ -22,24 +23,24 @@ use VitesseCms\Media\Fields\Image;
 
 class InitiateListeners implements InitiateListenersInterface
 {
-    public static function setListeners(InjectableInterface $di): void
+    public static function setListeners(InjectableInterface $injectable): void
     {
-        if ($di->user->hasAdminAccess()):
-            $di->eventsManager->attach('adminMenu', new AdminMenuListener());
+        if ($injectable->user->hasAdminAccess()):
+            $injectable->eventsManager->attach('adminMenu', new AdminMenuListener());
         endif;
-        $di->eventsManager->attach(
+        $injectable->eventsManager->attach(
             Image::class,
             new ImportFieldImageListener(
-                $di->configuration,
-                $di->url
+                $injectable->configuration,
+                $injectable->url
             )
         );
-        $di->eventsManager->attach('FieldPrice', new ImportFieldPriceListener());
-        $di->eventsManager->attach(
+        $injectable->eventsManager->attach('FieldPrice', new ImportFieldPriceListener());
+        $injectable->eventsManager->attach(
             ImportTypeEnum::IMPORTTYPE_LISTENER->value,
             new ImportTypeListener(new ImportTypeRepository())
         );
-        $di->eventsManager->attach(
+        $injectable->eventsManager->attach(
             ImportEnum::IMPORT_HANDLER_LISTENER,
             new ImportLineHandlerListener(
                 new RepositoryCollection(
@@ -50,9 +51,9 @@ class InitiateListeners implements InitiateListenersInterface
                     new ImportDatafieldRepository(),
                     new DatafieldRepository()
                 ),
-                $di->eventsManager,
-                $di->log,
-                $di->url
+                $injectable->eventsManager,
+                $injectable->log,
+                $injectable->url
             )
         );
     }
